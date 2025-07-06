@@ -1,0 +1,133 @@
+@model EcoConnect_Hanoi.Models.Users
+@{
+    ViewData["Title"] = "Đăng ký";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="left">
+        <h1>♻️ EcoConnect</h1>
+        <h2>🤝 Chung tay vì Hà Nội xanh</h2>
+        <p>Kết nối cộng đồng, bảo vệ môi trường và xây dựng lối sống bền vững.</p>
+        <div class="feature">
+            <div class="feature-box">
+                <h4>♻️ Tái chế thông minh</h4>
+                <p>Hướng dẫn phân loại và tái chế rác thải hiệu quả</p>
+            </div>
+            <div class="feature-box">
+                <h4>🤝 Kết nối cộng đồng</h4>
+                <p>Chia sẻ và trao đổi đồ dùng không cần thiết</p>
+            </div>
+            <div class="feature-box">
+                <h4>🏆 Thử thách xanh</h4>
+                <p>Tham gia các hoạt động bảo vệ môi trường</p>
+            </div>
+        </div>
+    </div>
+    <div class="right">
+        <div class="tabs">
+            <a href="/Account/Login">Đăng nhập</a> 
+            <a href="#" class="active">Đăng ký</a>
+        </div>
+        <div class="register-title">Đăng ký tài khoản EcoConnect</div>
+        <div class="social-login">
+            <button class="google-btn">Đăng ký với Google</button>
+            <button class="facebook-btn">Đăng ký với Facebook</button>
+        </div>
+        <div class="separator">hoặc đăng ký với email</div>
+
+
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert error-message" role="alert">
+                @ViewBag.ErrorMessage
+            </div>
+        }
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div> 
+
+        <form asp-action="Register" asp-controller="Account" method="post">
+            <div class="form-group">
+                <label for="LastName">Họ *</label>
+                <input asp-for="LastName" class="form-control" placeholder="Nhập họ của bạn" />
+                <span asp-validation-for="LastName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="FirstName">Tên *</label>
+                <input asp-for="FirstName" class="form-control" placeholder="Nhập tên của bạn" />
+                <span asp-validation-for="FirstName" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="Email">Email *</label>
+                <input asp-for="Email" class="form-control" placeholder="Nhập địa chỉ email của bạn" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="PasswordHash">Mật khẩu *</label>
+                <input asp-for="PasswordHash" type="password" class="form-control" placeholder="Tạo mật khẩu (ít nhất 8 ký tự)" />
+                <span asp-validation-for="PasswordHash" class="text-danger"></span>
+                <div class="password-strength">Độ mạnh mật khẩu</div> 
+            </div>
+            <div class="form-group">
+                <label for="ConfirmPassword">Xác nhận mật khẩu *</label>
+                <input asp-for="ConfirmPassword" type="password" class="form-control" placeholder="Nhập lại mật khẩu" />
+                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="PhoneNumber">Số điện thoại</label>
+                <input asp-for="PhoneNumber" class="form-control" placeholder="Nhập số điện thoại của bạn" />
+                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <label for="LivingArea">Khu vực sinh sống *</label>
+                <select asp-for="LivingArea" class="form-control">
+                    <option value="">Chọn khu vực của bạn</option>
+                    <option value="Ba Dinh">Ba Đình</option>
+                    <option value="Cau Giay">Cầu Giấy</option>
+                    <option value="Dong Da">Đống Đa</option>
+                    <option value="Ha Dong">Hà Đông</option>
+                    <option value="Hoan Kiem">Hoàn Kiếm</option>
+                    <option value="Hoang Mai">Hoàng Mai</option>
+                    <option value="Long Bien">Long Biên</option>
+                    <option value="Nam Tu Liem">Nam Từ Liêm</option>
+                    <option value="Tay Ho">Tây Hồ</option>
+                    <option value="Thanh Xuan">Thanh Xuân</option>
+                    <option value="Bac Tu Liem">Bắc Từ Liêm</option>
+                    </select>
+                <span asp-validation-for="LivingArea" class="text-danger"></span>
+            </div>
+            <button type="submit" class="register-btn">Đăng ký</button> 
+        </form>
+
+        <div class="login-link">
+            Đã có tài khoản? <a href="/Account/Login">Đăng nhập</a> 
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link href="~/css/register.css" rel="stylesheet" />
+    <style>
+        .alert {
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .alert.success-message {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+}
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

@@ -1,0 +1,16 @@
+@model EcoConnect_Hanoi.Models.CommunityItems
+@{
+    ViewData["Title"] = "Xóa món đồ";
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<div class="alert alert-warning">
+    Bạn có chắc muốn xóa món đồ <strong>@Model.Title</strong> không?
+</div>
+
+<form asp-action="DeleteConfirmed" method="post">
+    <input type="hidden" asp-for="ItemId" />
+    <button type="submit" class="btn btn-danger">Xác nhận xóa</button>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại</a>
+</form>

@@ -1,0 +1,80 @@
+@model EcoConnect_Hanoi.Models.CommunityItems
+
+@{
+    ViewData["Title"] = "Chỉnh sửa món đồ";
+    var categories = ViewBag.Categories as List<EcoConnect_Hanoi.Models.ItemCategories>;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Edit" method="post" enctype="multipart/form-data">
+    @Html.HiddenFor(m => m.ItemId)
+
+    <div class="form-group">
+        <label asp-for="Title"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <!-- Edit.cshtml -->
+    <div class="form-group">
+        <label asp-for="ItemCategoryId">Danh mục</label>
+        <select asp-for="ItemCategoryId" asp-items="(SelectList)ViewBag.CategoryList"
+                class="form-control"></select>
+    </div>
+    
+
+    <div class="form-group">
+        <label asp-for="Type">Hình thức</label>
+        <select asp-for="Type" class="form-control">
+            @foreach (var type in Enum.GetValues(typeof(EcoConnect_Hanoi.Models.CommunityItems.ItemType)))
+            {
+                <option value="@type" selected="@(type.Equals(Model.Type))">@type</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Status">Trạng thái</label>
+        <select asp-for="Status" class="form-control">
+            @foreach (var status in Enum.GetValues(typeof(EcoConnect_Hanoi.Models.CommunityItems.ItemStatus)))
+            {
+                <option value="@status" selected="@(status.Equals(Model.Status))">@status</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Thêm ảnh mới</label>
+        <input type="file" name="ImageFiles" class="form-control" multiple />
+        <small class="form-text text-muted">Chọn một hoặc nhiều ảnh (jpg, png).</small>
+    </div>
+
+    @if (Model.Images != null && Model.Images.Any())
+    {
+        <div class="mb-3">
+            <label>Ảnh hiện tại:</label>
+            <div class="row">
+                @foreach (var img in Model.Images)
+                {
+                    <div class="col-md-3 col-6 mb-2">
+                        <img src="~/uploads/@img.ImageUrl" class="img-fluid rounded border" />
+                    </div>
+                }
+            </div>
+        </div>
+    }
+
+    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Hủy</a>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

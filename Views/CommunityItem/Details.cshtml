@@ -1,0 +1,41 @@
+@model EcoConnect_Hanoi.Models.CommunityItems
+
+@{
+    ViewData["Title"] = "Chi tiết món đồ";
+}
+
+<h2 class="mb-4">@Model.Title</h2>
+
+<div class="mb-3">
+    <p><strong>Mô tả:</strong> @Model.Description</p>
+    <p><strong>Danh mục:</strong> @Model.ItemCategory?.Name</p>
+    <p><strong>Người đăng:</strong> @Model.User?.FirstName</p>
+    <p><strong>Tình trạng:</strong> @Model.ItemCondition</p>
+    <p><strong>Hình thức:</strong> @Model.Type</p>
+    <p><strong>Trạng thái:</strong> @Model.Status</p>
+    <p><strong>Mong muốn trao đổi:</strong> @Model.ExchangeWishes</p>
+</div>
+
+@if (Model.Images != null && Model.Images.Any())
+{
+    <div class="mb-4">
+        <strong>Ảnh minh họa:</strong>
+        <div class="row mt-2">
+            @foreach (var img in Model.Images)
+            {
+                <div class="col-md-3 col-sm-4 col-6 mb-3">
+                    <img src="~/uploads/@img.ImageUrl" class="img-fluid rounded border" alt="Ảnh món đồ" />
+                </div>
+            }
+        </div>
+    </div>
+}
+else
+{
+    <p><em>Chưa có ảnh được tải lên cho món đồ này.</em></p>
+}
+
+<div class="mt-3">
+    <a asp-action="Edit" asp-route-id="@Model.ItemId" class="btn btn-outline-primary me-2">Sửa</a>
+    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+</div>

@@ -1,0 +1,32 @@
+@model IEnumerable<EcoConnect_Hanoi.Models.CommunityItems>
+
+@{
+    ViewData["Title"] = "Chợ đồ cũ EcoConnect Hanoi";
+}
+
+<h2 class="mb-4 text-center">@ViewData["Title"]</h2>
+
+<div class="row">
+    @foreach (var item in Model)
+    {
+        var imageUrl = item.Images?.FirstOrDefault()?.ImageUrl ?? "no-image.png";
+        <div class="col-md-4 mb-4">
+            <div class="card h-100 border-0 shadow-sm">
+                <img src="~/uploads/@imageUrl" class="card-img-top" style="height: 220px; object-fit: cover;" alt="Ảnh món đồ" />
+                <div class="card-body d-flex flex-column">
+                    <h5 class="card-title">@item.Title</h5>
+                    <p class="mb-2 text-muted">
+                        <small><strong>Danh mục:</strong> @item.ItemCategory?.Name</small><br />
+                        <small><strong>Người đăng:</strong> @item.User?.FirstName</small><br />
+                        <small><strong>Trạng thái:</strong> @item.Status</small>
+                    </p>
+                    <a asp-action="Details" asp-route-id="@item.ItemId" class="mt-auto btn btn-outline-primary btn-sm w-100">Xem chi tiết</a>
+                </div>
+            </div>
+        </div>
+    }
+</div>
+
+<div class="text-end mt-4">
+    <a asp-action="Create" class="btn btn-success btn-lg">+ Đăng món đồ mới</a>
+</div>

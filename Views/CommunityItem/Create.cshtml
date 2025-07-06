@@ -1,0 +1,73 @@
+@model EcoConnect_Hanoi.Models.CommunityItems
+@{
+    ViewData["Title"] = "Đăng món đồ mới";
+    var categories = ViewBag.Categories as List<EcoConnect_Hanoi.Models.ItemCategories>;
+}
+
+<h2>@ViewData["Title"]</h2>
+
+<form asp-action="Create" method="post" enctype="multipart/form-data">
+    <div class="form-group">
+        <label asp-for="Title"></label>
+        <input asp-for="Title" class="form-control" />
+        <span asp-validation-for="Title" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="Description"></label>
+        <textarea asp-for="Description" class="form-control"></textarea>
+        <span asp-validation-for="Description" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ItemCategoryId">Danh mục</label>
+        <select asp-for="ItemCategoryId"
+                asp-items="(SelectList)ViewBag.CategoryList"
+                class="form-control">
+            <option value="">-- Chọn danh mục --</option>
+        </select>
+        <span asp-validation-for="ItemCategoryId" class="text-danger"></span>
+    </div>
+
+
+
+    <div class="form-group">
+        <label>Tình trạng</label>
+        <select asp-for="ItemCondition" class="form-control">
+            @foreach (var cond in Enum.GetValues(typeof(EcoConnect_Hanoi.Models.CommunityItems.ItemCondittions)))
+            {
+                <option value="@cond">@cond</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label>Hình thức</label>
+        <select asp-for="Type" class="form-control">
+            @foreach (var type in Enum.GetValues(typeof(EcoConnect_Hanoi.Models.CommunityItems.ItemType)))
+            {
+                <option value="@type">@type</option>
+            }
+        </select>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ExchangeWishes"></label>
+        <input asp-for="ExchangeWishes" class="form-control" />
+        <span asp-validation-for="ExchangeWishes" class="text-danger"></span>
+    </div>
+
+    <input type="hidden" asp-for="OwnerUserId" value="1" />
+
+    <div class="form-group">
+        <label>Ảnh minh họa</label>
+        <input type="file" name="ImageFiles" class="form-control" multiple />
+        <small class="form-text text-muted">Bạn có thể chọn nhiều ảnh (jpg, png).</small>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Đăng tin</button>
+</form>
+
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

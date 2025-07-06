@@ -1,0 +1,463 @@
+/* General Body and Container Setup */
+body {
+    font-family: 'Arial', sans-serif; /* Use a common font, or link to Google Fonts */
+    margin: 0;
+    padding: 0;
+    background-color: #f0fff0; /* Light green background */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh; /* Full viewport height */
+}
+
+.registration-container {
+    display: flex;
+    max-width: 1200px; /* Adjust as needed */
+    width: 90%;
+    min-height: 700px; /* Minimum height for the container */
+    background-color: #fff;
+    border-radius: 15px;
+    overflow: hidden; /* Important for border-radius on children */
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+}
+
+/* Left Section Styles */
+.registration-left {
+    flex: 1;
+    background-color: #4CAF50; /* Green background */
+    padding: 40px;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    position: relative; /* For absolute positioning of leaf background */
+    overflow: hidden;
+    text-align: center;
+}
+
+.registration-left .leaf-logo {
+    width: 60px; /* Adjust size */
+    height: 60px;
+    margin-bottom: 10px;
+    filter: brightness(0) invert(1); /* Makes a green leaf white */
+}
+
+.registration-left .app-title {
+    font-size: 2.5em;
+    margin: 0 0 10px 0;
+    font-weight: bold;
+}
+
+.registration-left .tagline {
+    font-size: 1.8em;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.registration-left .description {
+    font-size: 1.1em;
+    line-height: 1.6;
+    margin-bottom: 40px;
+    max-width: 80%; /* Limit width of description */
+}
+
+.registration-left .features-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* 2 columns */
+    gap: 20px; /* Space between boxes */
+    margin-bottom: 40px;
+    width: 100%;
+    max-width: 400px; /* Limit width of grid */
+}
+
+.registration-left .feature-box {
+    background-color: rgba(255, 255, 255, 0.15); /* Slightly transparent white */
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    backdrop-filter: blur(5px); /* Frosted glass effect */
+}
+
+.registration-left .feature-box .icon {
+    font-size: 1.8em; /* Icon size */
+    margin-bottom: 10px;
+    display: block;
+}
+
+.registration-left .feature-box h4 {
+    font-size: 1.1em;
+    margin: 0 0 5px 0;
+    font-weight: bold;
+}
+
+.registration-left .feature-box p {
+    font-size: 0.9em;
+    margin: 0;
+    line-height: 1.5;
+}
+
+.registration-left .community-stats {
+    font-size: 1em;
+    margin-top: 20px;
+}
+
+.registration-left .leaf-bg-bottom {
+    position: absolute;
+    bottom: -20px; /* Adjust to desired position */
+    right: -20px; /* Adjust to desired position */
+    width: 150px; /* Size of the background leaf */
+    height: auto;
+    opacity: 0.2; /* Make it subtle */
+    transform: rotate(-30deg); /* Rotate for effect */
+    z-index: 0; /* Ensure it's behind content */
+}
+
+/* Right Section Styles - Form */
+.registration-right {
+    flex: 1.5; /* Slightly wider than the left side */
+    padding: 40px;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* Align content to the top */
+    color: #333;
+}
+
+.registration-header {
+    text-align: left; /* Align header text to left */
+    margin-bottom: 30px;
+}
+
+.registration-header h1 {
+    font-size: 2em;
+    margin: 0 0 5px 0;
+    color: #333;
+}
+
+.registration-header p {
+    font-size: 1.1em;
+    color: #666;
+    margin: 0;
+}
+
+/* Progress Steps Styling */
+.progress-steps {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 40px;
+    position: relative;
+    padding: 0 20px; /* Adjust padding to make space for connecting lines */
+}
+
+.progress-steps::before {
+    content: '';
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 2px;
+    background-color: #ddd;
+    z-index: 1;
+}
+
+.progress-steps .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    position: relative;
+    z-index: 2; /* Bring steps above the line */
+}
+
+.progress-steps .step-number {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background-color: #ddd;
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-weight: bold;
+    margin-bottom: 8px;
+    transition: background-color 0.3s ease;
+}
+
+.progress-steps .step-text {
+    font-size: 0.9em;
+    color: #888;
+    text-align: center;
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.progress-steps .step.active .step-number {
+    background-color: #4CAF50; /* Active green */
+}
+
+.progress-steps .step.active .step-text {
+    color: #333; /* Darker text for active step */
+    font-weight: bold;
+}
+
+/* Form Styles */
+.registration-form {
+    width: 100%;
+}
+
+.form-row {
+    display: flex;
+    gap: 20px; /* Space between Họ and Tên */
+    margin-bottom: 15px; /* Space below the row */
+}
+
+.form-group-half {
+    flex: 1; /* Each takes half width */
+}
+
+.form-group {
+    margin-bottom: 15px;
+    position: relative; /* For labels and eye icon */
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+    color: #555;
+    font-weight: 600;
+}
+
+.form-group .required {
+    color: #e53935; /* Red for required asterisk */
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    font-size: 1em;
+    box-sizing: border-box; /* Include padding in width */
+    transition: border-color 0.3s ease;
+}
+
+.form-control:focus {
+    border-color: #4CAF50;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.2);
+}
+
+.text-danger {
+    color: #e53935;
+    font-size: 0.8em;
+    margin-top: 5px;
+    display: block;
+}
+
+.password-input-wrapper {
+    position: relative;
+    display: flex; /* Để input và icon nằm cùng hàng */
+    align-items: center; /* Căn giữa theo chiều dọc */
+}
+
+.password-input-wrapper .form-control {
+    padding-right: 40px; /* Tạo không gian cho biểu tượng mắt */
+}
+
+.password-toggle {
+    position: absolute;
+    right: 15px; /* Đặt icon cách lề phải 15px */
+    cursor: pointer;
+    color: #888; /* Màu xám cho icon */
+    font-size: 0.9em;
+    z-index: 2; /* Đảm bảo icon nằm trên input */
+}
+
+/* Password Strength Indicator */
+.password-strength-indicator {
+    margin-top: 8px; /* Khoảng cách từ input */
+    height: 8px; /* Chiều cao của thanh độ mạnh */
+    background-color: #e0e0e0; /* Màu nền xám nhạt */
+    border-radius: 4px;
+    overflow: hidden; /* Đảm bảo thanh màu xanh không tràn ra ngoài */
+    position: relative;
+}
+
+.password-strength-indicator .strength-bar {
+    height: 100%;
+    width: 0%; /* Mặc định là 0% */
+    background-color: #ccc; /* Màu mặc định */
+    border-radius: 4px;
+    transition: width 0.3s ease-in-out, background-color 0.3s ease-in-out; /* Hiệu ứng chuyển động mượt mà */
+}
+
+.password-strength-indicator .strength-text {
+    font-size: 0.8em;
+    color: #888; /* Màu chữ mặc định */
+    position: absolute;
+    left: 0;
+    top: -20px; /* Đặt chữ phía trên thanh bar */
+    width: 100%;
+    text-align: left;
+    white-space: nowrap;
+    opacity: 0.8;
+}
+
+/* Colors for strength levels */
+.strength-level-0 .strength-bar { background-color: #ff4d4f; } /* Red (Rất yếu) */
+.strength-level-0 .strength-text { color: #ff4d4f; }
+
+.strength-level-1 .strength-bar { background-color: #ffa940; } /* Orange (Yếu) */
+.strength-level-1 .strength-text { color: #ffa940; }
+
+.strength-level-2 .strength-bar { background-color: #ffc53d; } /* Light Orange (Trung bình) */
+.strength-level-2 .strength-text { color: #ffc53d; }
+
+.strength-level-3 .strength-bar { background-color: #95de64; } /* Light Green (Tốt) */
+.strength-level-3 .strength-text { color: #95de64; }
+
+.strength-level-4 .strength-bar { background-color: #52c41a; } /* Green (Rất tốt) */
+.strength-level-4 .strength-text { color: #52c41a; }
+
+/* Custom Select Styling */
+.form-control.custom-select {
+    appearance: none; /* Remove default browser arrow */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23888888" height="24" viewBox="0 0 24 24" width="24" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>'); /* Custom arrow */
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    padding-right: 35px; /* Space for the arrow */
+}
+
+
+.register-btn {
+    width: 100%;
+    padding: 15px;
+    background-color: #4CAF50; /* Green button */
+    color: white;
+    border: none;
+    border-radius: 8px;
+    font-size: 1.1em;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    margin-top: 20px;
+}
+
+.register-btn:hover {
+    background-color: #45a049;
+}
+
+.login-prompt {
+    text-align: center;
+    margin-top: 30px;
+    font-size: 0.95em;
+    color: #555;
+}
+
+.login-prompt a {
+    color: #4CAF50;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+.login-prompt a:hover {
+    text-decoration: underline;
+}
+
+
+/* Responsive Design */
+@media (max-width: 992px) {
+    .registration-container {
+        flex-direction: column; /* Stack sections vertically */
+        width: 100%;
+        min-height: auto;
+        border-radius: 0;
+        box-shadow: none;
+    }
+
+    .registration-left {
+        padding: 30px 20px;
+        border-bottom-left-radius: 0;
+        border-top-right-radius: 0;
+    }
+
+    .registration-left .app-title {
+        font-size: 2em;
+    }
+    .registration-left .tagline {
+        font-size: 1.5em;
+    }
+    .registration-left .description {
+        font-size: 1em;
+    }
+
+    .registration-left .features-grid {
+        grid-template-columns: 1fr; /* Stack features on smaller screens */
+        max-width: none;
+    }
+
+    .registration-left .leaf-bg-bottom {
+        display: none; /* Hide decorative leaf on small screens */
+    }
+
+    .registration-right {
+        padding: 30px 20px;
+        flex: auto; /* Allow it to take necessary height */
+    }
+
+    .form-row {
+        flex-direction: column; /* Stack first name/last name vertically */
+        gap: 0; /* Remove gap */
+    }
+
+    .form-group-half {
+        margin-bottom: 15px; /* Add space between stacked halves */
+    }
+
+    .progress-steps {
+        padding: 0 10px;
+        margin-bottom: 20px;
+        font-size: 0.8em; /* Smaller text for steps */
+    }
+
+    .progress-steps::before {
+        left: 10px;
+        right: 10px;
+    }
+}
+
+@media (max-width: 576px) {
+    .registration-right {
+        padding: 20px 15px;
+    }
+
+    .registration-header h1 {
+        font-size: 1.5em;
+    }
+
+    .registration-header p {
+        font-size: 0.9em;
+    }
+
+    .form-group label {
+        font-size: 0.8em;
+    }
+
+    .form-control {
+        padding: 10px 12px;
+        font-size: 0.9em;
+    }
+
+    .register-btn {
+        padding: 12px;
+        font-size: 1em;
+    }
+
+    .password-toggle {
+        right: 10px;
+    }
+}
