@@ -1,0 +1,130 @@
+@model EcoConnect_Hanoi.Areas.Admin.Controllers.AdminDashboardViewModel
+
+@{
+    ViewData["Title"] = "Tổng quan Admin"; // Tên trang sẽ hiển thị trên tab trình duyệt
+    Layout = "_AdminLayout"; // Kế thừa layout Admin mới tạo
+}
+
+<div class="container-fluid">
+    @* Có thể bỏ H1 ở đây nếu bạn muốn nó chỉ ở header của _AdminLayout *@
+    @* <h1 class="mb-4 text-success">Tổng quan</h1> *@
+
+    <div class="row g-4 mb-4">
+        <div class="col-md-3">
+            <div class="dashboard-card">
+                <div class="icon"><i class="bi bi-people"></i></div>
+                <h3>@Model.TotalUsers</h3>
+                <p>Tổng người dùng</p>
+                <small class="text-muted">+12% so với tháng trước</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dashboard-card">
+                <div class="icon"><i class="bi bi-box-seam"></i></div>
+                <h3>@Model.TotalDonatedItems</h3>
+                <p>Đồ đã tặng</p>
+                <small class="text-muted">+8% so với tháng trước</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dashboard-card">
+                <div class="icon"><i class="bi bi-trash"></i></div>
+                <h3>@Model.TotalRecycledWasteKg kg</h3>
+                <p>Rác tái chế (kg)</p>
+                <small class="text-muted">+15% so với tháng trước</small>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <div class="dashboard-card">
+                <div class="icon"><i class="bi bi-check-circle"></i></div>
+                <h3>@Model.TotalChallengesCompleted</h3>
+                <p>Thử thách hoàn thành</p>
+                <small class="text-muted">+5% so với tháng trước</small>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4 mt-2">
+        <div class="col-md-6">
+            <div class="chart-card">
+                <h5>Hoạt động người dùng theo tháng</h5>
+                <canvas id="userActivityChart"></canvas>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="chart-card">
+                <h5>Phân loại đồ tặng</h5>
+                <canvas id="itemCategoryChart"></canvas>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Data for charts
+        const userActivityDataRaw = @Html.Raw(Json.Serialize(Model.UserActivityChartData));
+        const userActivityLabels = Object.keys(userActivityDataRaw).map(monthNum => {
+            const date = new Date();
+            date.setMonth(parseInt(monthNum) - 1); // Month is 0-indexed in JS Date
+            return date.toLocaleString('vi-VN', { month: 'short' }); // "Thg 1", "Thg 2", etc.
+        });
+        const userActivityValues = Object.values(userActivityDataRaw);
+
+        new Chart(document.getElementById('userActivityChart'), {
+            type: 'bar',
+            data: {
+                labels: userActivityLabels,
+                datasets: [{
+                    label: 'Số người dùng đăng ký',
+                    data: userActivityValues,
+                    backgroundColor: '#4CAF50',
+                    borderColor: '#388E3C',
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false, // Để biểu đồ có thể co giãn tốt hơn
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        ticks: {
+                            precision: 0 // Đảm bảo số nguyên
+                        }
+                    }
+                }
+            }
+        });
+
+        const itemCategoryDataRaw = @Html.Raw(Json.Serialize(Model.ItemCategoryDistribution));
+        const itemCategoryLabels = Object.keys(itemCategoryDataRaw);
+        const itemCategoryValues = Object.values(itemCategoryDataRaw);
+        const backgroundColors = [
+            '#4CAF50', '#8BC34A', '#CDDC39', '#FFEB3B', '#FFC107', '#FF9800', '#FF5722', '#F44336',
+            '#00BCD4', '#03A9F4', '#2196F3', '#3F51B5', '#673AB7', '#9C27B0', '#E91E63', '#9E9E9E'
+        ];
+
+        new Chart(document.getElementById('itemCategoryChart'), {
+            type: 'doughnut',
+            data: {
+                labels: itemCategoryLabels,
+                datasets: [{
+                    label: 'Phân loại đồ tặng',
+                    data: itemCategoryValues,
+                    backgroundColor: backgroundColors.slice(0, itemCategoryLabels.length),
+                    hoverOffset: 4
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                    }
+                }
+            }
+        });
+    </script>
+}

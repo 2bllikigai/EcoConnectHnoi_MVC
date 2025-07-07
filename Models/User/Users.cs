@@ -64,7 +64,8 @@ namespace EcoConnect_Hanoi.Models
         [MaxLength(20)]
         public string? PhoneNumber { get; set; }
         public ICollection<CommunityItems> CommunityItems { get; set; } = new List<CommunityItems>();
-
+        public string? EmailVerificationToken { get; set; }
+        public DateTime? TokenExpiration { get; set; }
         public DateTime RegistrationDate { get; set; } = DateTime.Now;
 
         public DateTime? LastLoginDate { get; set; }
@@ -78,7 +79,7 @@ namespace EcoConnect_Hanoi.Models
         [MaxLength(500)]
         public string? EnvironmentalInterests { get; set; }
 
-        public int ActivityScore { get; private set; } = 0;
+        public int ActivityScore { get;  set; } 
 
         [MaxLength(100)]
         public string? LivingArea { get; set; } = string.Empty;
@@ -87,7 +88,7 @@ namespace EcoConnect_Hanoi.Models
         public string? PreferredLanguage { get; set; }
 
         [Range(0, int.MaxValue, ErrorMessage = "Điểm Eco phải lớn hơn hoặc bằng 0.")]
-        public int EcoPoints { get; private set; } = 0;
+        public int EcoPoints { get; set; } 
 
         public void AddEcopoints(int points)
         {
