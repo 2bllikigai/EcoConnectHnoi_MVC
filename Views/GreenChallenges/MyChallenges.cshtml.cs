@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace EcoConnect_Hanoi.Views.GreenChallenges;
 
-public class UserChallenges : PageModel
+public class MyChallenges : PageModel
 {
     public void OnGet()
     {

@@ -1,41 +1,144 @@
+@using System.Security.Claims
 @model EcoConnect_Hanoi.Models.CommunityItems
 
 @{
-    ViewData["Title"] = "Chi tiết món đồ";
+    ViewData["Title"] = Model.Title;
 }
 
-<h2 class="mb-4">@Model.Title</h2>
-
-<div class="mb-3">
-    <p><strong>Mô tả:</strong> @Model.Description</p>
-    <p><strong>Danh mục:</strong> @Model.ItemCategory?.Name</p>
-    <p><strong>Người đăng:</strong> @Model.User?.FirstName</p>
-    <p><strong>Tình trạng:</strong> @Model.ItemCondition</p>
-    <p><strong>Hình thức:</strong> @Model.Type</p>
-    <p><strong>Trạng thái:</strong> @Model.Status</p>
-    <p><strong>Mong muốn trao đổi:</strong> @Model.ExchangeWishes</p>
-</div>
-
-@if (Model.Images != null && Model.Images.Any())
-{
-    <div class="mb-4">
-        <strong>Ảnh minh họa:</strong>
-        <div class="row mt-2">
-            @foreach (var img in Model.Images)
-            {
-                <div class="col-md-3 col-sm-4 col-6 mb-3">
-                    <img src="~/uploads/@img.ImageUrl" class="img-fluid rounded border" alt="Ảnh món đồ" />
+<div class="container my-5">
+    <div class="card shadow-sm">
+        <div class="card-header bg-primary text-white">
+            <h1 class="card-title mb-0">@Model.Title</h1>
+        </div>
+        <div class="card-body">
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                    @if (Model.Images != null && Model.Images.Any())
+                    {
+                        <div id="itemCarousel" class="carousel slide" data-bs-ride="carousel">
+                            <div class="carousel-inner">
+                                @foreach (var image in Model.Images.Select((img, index) => new { img, index }))
+                                {
+                                    <div class="carousel-item @(image.index == 0 ? "active" : "")">
+                                        <img src="@image.img.ImageUrl" class="d-block w-100 item-detail-image" alt="Product Image @(image.index + 1)" onerror="this.onerror=null;this.src='/images/placeholder.png';"/>
+                                    </div>
+                                }
+                            </div>
+                            @if (Model.Images.Count() > 1)
+                            {
+                                <button class="carousel-control-prev" type="button" data-bs-target="#itemCarousel" data-bs-slide="prev">
+                                    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Previous</span>
+                                </button>
+                                <button class="carousel-control-next" type="button" data-bs-target="#itemCarousel" data-bs-slide="next">
+                                    <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                    <span class="visually-hidden">Next</span>
+                                </button>
+                            }
+                        </div>
+                    }
+                    else
+                    {
+                        <img src="/images/placeholder.png" class="d-block w-100 item-detail-image" alt="No Image"/>
+                    }
                 </div>
-            }
+                <div class="col-md-6">
+                    <dl class="row">
+                        <dt class="col-sm-4">Mô tả:</dt>
+                        <dd class="col-sm-8">@Model.Description</dd>
+
+                        <dt class="col-sm-4">Danh mục:</dt>
+                        <dd class="col-sm-8">@Model.ItemCategory?.DisplayName</dd>
+
+                        <dt class="col-sm-4">Tình trạng:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge @(Model.ItemCondition == EcoConnect_Hanoi.Models.CommunityItems.ItemCondittions.New ? "bg-success" : Model.ItemCondition == EcoConnect_Hanoi.Models.CommunityItems.ItemCondittions.LikeNew ? "bg-info" : "bg-warning")">
+                                @Model.ItemCondition.ToString()
+                            </span>
+                        </dd>
+
+                        <dt class="col-sm-4">Loại giao dịch:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge @(Model.Type == EcoConnect_Hanoi.Models.CommunityItems.ItemType.Giveaway ? "bg-primary" : "bg-secondary")">
+                                @Model.Type.ToString()
+                            </span>
+                        </dd>
+
+                        @if (Model.Type == EcoConnect_Hanoi.Models.CommunityItems.ItemType.Exchange)
+                        {
+                            <dt class="col-sm-4">Mong muốn trao đổi:</dt>
+                            <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.ExchangeWishes) ? "Không có" : Model.ExchangeWishes)</dd>
+                        }
+
+                        <dt class="col-sm-4">Địa điểm ưu tiên:</dt>
+                        <dd class="col-sm-8">@(string.IsNullOrEmpty(Model.PreferredLocation) ? "Không chỉ định" : Model.PreferredLocation)</dd>
+
+                        <dt class="col-sm-4">Đăng bởi:</dt>
+                        <dd class="col-sm-8">@Model.User?.FullName</dd>
+
+                        <dt class="col-sm-4">Ngày đăng:</dt>
+                        <dd class="col-sm-8">@Model.CreatedAt.ToShortDateString()</dd>
+
+                        <dt class="col-sm-4">Trạng thái:</dt>
+                        <dd class="col-sm-8">
+                            <span class="badge @(Model.Status == EcoConnect_Hanoi.Models.CommunityItems.ItemStatus.Available ? "bg-success" : Model.Status == EcoConnect_Hanoi.Models.CommunityItems.ItemStatus.Reserved ? "bg-info" : "bg-dark")">
+                                @Model.Status.ToString()
+                            </span>
+                        </dd>
+                    </dl>
+                    
+                    <div class="mt-4">
+                        <a asp-action="Index" class="btn btn-outline-secondary">Quay lại danh sách</a>
+                        @if (User.Identity.IsAuthenticated && Model.OwnerUserId.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                        {
+                            <a asp-action="Edit" asp-route-id="@Model.ItemId" class="btn btn-warning ms-2">Sửa</a>
+                            <a asp-action="Delete" asp-route-id="@Model.ItemId" class="btn btn-danger ms-2">Xóa</a>
+                        }
+                        else if (User.Identity.IsAuthenticated) // Nếu người khác xem
+                        {
+                            <button type="button" class="btn btn-primary ms-2" data-bs-toggle="modal" data-bs-target="#contactModal">
+                                Liên hệ người bán
+                            </button>
+                            }
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-}
-else
-{
-    <p><em>Chưa có ảnh được tải lên cho món đồ này.</em></p>
-}
-
-<div class="mt-3">
-    <a asp-action="Edit" asp-route-id="@Model.ItemId" class="btn btn-outline-primary me-2">Sửa</a>
-    <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
 </div>
+
+<div class="modal fade" id="contactModal" tabindex="-1" aria-labelledby="contactModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="contactModalLabel">Liên hệ với @Model.User?.FullName</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>Bạn có thể liên hệ người bán qua email hoặc số điện thoại (nếu họ công khai):</p>
+                <p><strong>Email:</strong> @Model.User?.Email</p>
+                @* <p><strong>Điện thoại:</strong> @Model.User?.PhoneNumber</p> *@
+                <p class="text-muted small">
+                    Chúng tôi khuyến khích bạn trao đổi chi tiết trực tiếp với người bán.
+                </p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .item-detail-image {
+        max-height: 450px; /* Giới hạn chiều cao */
+        width: auto;
+        object-fit: contain; /* Giữ tỷ lệ và không cắt ảnh */
+        border-radius: .25rem;
+        display: block; /* Để căn giữa ảnh */
+        margin: 0 auto; /* Căn giữa ảnh trong cột */
+    }
+    .carousel-item img {
+        background-color: #f0f0f0; /* Màu nền nếu ảnh không lấp đầy khung */
+    }
+</style>

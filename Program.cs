@@ -30,7 +30,7 @@ builder.Services.AddSession(options =>
 // Cấu hình EmailSettings và đăng ký EmailSender service
 builder.Services.Configure<EmailSettings>(builder.Configuration.GetSection("EmailSettings"));
 builder.Services.AddTransient<IEmailSender, EmailSender>();
-
+builder.Services.AddScoped<IEmailSender, EmailSender>();
 // Đăng ký IPasswordHasher cho Users model
 // Đây là cách sử dụng PasswordHasher mặc định của ASP.NET Core Identity.
 // Nếu bạn muốn dùng BCrypt, bạn cần cài đặt package BCrypt.Net.Core
@@ -76,6 +76,10 @@ app.UseAuthorization();  // Kiểm tra quyền truy cập dựa trên User Princ
 
 // app.MapStaticAssets(); // Giữ nguyên nếu đây là extension method tùy chỉnh của bạn
 // app.UseSession(); // Đã di chuyển lên trên, xóa dòng này
+app.MapControllerRoute(
+    name: "areas",
+    pattern: "{area:exists}/{controller=Home}/{action=Index}/{id?}"
+);
 
 app.MapControllerRoute(
         name: "default",

@@ -1,80 +1,144 @@
-@model EcoConnect_Hanoi.Models.CommunityItems
+@model EcoConnect_Hanoi.Models.CommunityItemViewModels.CommunityItemCreateEditViewModel
 
 @{
-    ViewData["Title"] = "Chỉnh sửa món đồ";
-    var categories = ViewBag.Categories as List<EcoConnect_Hanoi.Models.ItemCategories>;
+    ViewData["Title"] = "Chỉnh Sửa Sản Phẩm";
 }
 
-<h2>@ViewData["Title"]</h2>
+<div class="container my-5">
+    <h1 class="text-center mb-4">Chỉnh Sửa Sản Phẩm</h1>
 
-<form asp-action="Edit" method="post" enctype="multipart/form-data">
-    @Html.HiddenFor(m => m.ItemId)
+    <div class="card shadow-sm p-4">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+            <input type="hidden" asp-for="ItemId" /> @* Quan trọng: Giữ lại ItemId *@
 
-    <div class="form-group">
-        <label asp-for="Title"></label>
-        <input asp-for="Title" class="form-control" />
-        <span asp-validation-for="Title" class="text-danger"></span>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Description"></label>
-        <textarea asp-for="Description" class="form-control"></textarea>
-        <span asp-validation-for="Description" class="text-danger"></span>
-    </div>
-
-    <!-- Edit.cshtml -->
-    <div class="form-group">
-        <label asp-for="ItemCategoryId">Danh mục</label>
-        <select asp-for="ItemCategoryId" asp-items="(SelectList)ViewBag.CategoryList"
-                class="form-control"></select>
-    </div>
-    
-
-    <div class="form-group">
-        <label asp-for="Type">Hình thức</label>
-        <select asp-for="Type" class="form-control">
-            @foreach (var type in Enum.GetValues(typeof(EcoConnect_Hanoi.Models.CommunityItems.ItemType)))
-            {
-                <option value="@type" selected="@(type.Equals(Model.Type))">@type</option>
-            }
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label asp-for="Status">Trạng thái</label>
-        <select asp-for="Status" class="form-control">
-            @foreach (var status in Enum.GetValues(typeof(EcoConnect_Hanoi.Models.CommunityItems.ItemStatus)))
-            {
-                <option value="@status" selected="@(status.Equals(Model.Status))">@status</option>
-            }
-        </select>
-    </div>
-
-    <div class="form-group">
-        <label>Thêm ảnh mới</label>
-        <input type="file" name="ImageFiles" class="form-control" multiple />
-        <small class="form-text text-muted">Chọn một hoặc nhiều ảnh (jpg, png).</small>
-    </div>
-
-    @if (Model.Images != null && Model.Images.Any())
-    {
-        <div class="mb-3">
-            <label>Ảnh hiện tại:</label>
             <div class="row">
-                @foreach (var img in Model.Images)
-                {
-                    <div class="col-md-3 col-6 mb-2">
-                        <img src="~/uploads/@img.ImageUrl" class="img-fluid rounded border" />
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label"></label>
+                        <input asp-for="Title" class="form-control" placeholder="Tên sản phẩm của bạn" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
                     </div>
-                }
-            </div>
-        </div>
-    }
 
-    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
-    <a asp-action="Index" class="btn btn-secondary ms-2">Hủy</a>
-</form>
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label"></label>
+                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Mô tả chi tiết về sản phẩm"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ItemCategoryId" class="form-label"></label>
+                        <select asp-for="ItemCategoryId" class="form-select" asp-items="ViewBag.CategoryList">
+                            <option value="">-- Chọn Danh mục --</option>
+                        </select>
+                        <span asp-validation-for="ItemCategoryId" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ItemCondition" class="form-label"></label>
+                        <select asp-for="ItemCondition" class="form-select" asp-items="Html.GetEnumSelectList<EcoConnect_Hanoi.Models.CommunityItems.ItemCondittions>()">
+                            <option value="">-- Chọn Tình trạng --</option>
+                        </select>
+                        <span asp-validation-for="ItemCondition" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Type" class="form-label"></label>
+                        <select asp-for="Type" class="form-select" asp-items="Html.GetEnumSelectList<EcoConnect_Hanoi.Models.CommunityItems.ItemType>()" onchange="toggleExchangeWishes()">
+                            <option value="">-- Chọn Loại giao dịch --</option>
+                        </select>
+                        <span asp-validation-for="Type" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3" id="exchangeWishesField">
+                        <label asp-for="ExchangeWishes" class="form-label"></label>
+                        <input asp-for="ExchangeWishes" class="form-control" placeholder="Ví dụ: sách, đồ điện tử nhỏ..." />
+                        <span asp-validation-for="ExchangeWishes" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PreferredLocation" class="form-label"></label>
+                        <input asp-for="PreferredLocation" class="form-control" placeholder="Ví dụ: Cầu Giấy, Ba Đình..." />
+                        <span asp-validation-for="PreferredLocation" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Ảnh hiện tại:</label>
+                        @if (Model.ExistingImages != null && Model.ExistingImages.Any())
+                        {
+                            <div class="d-flex flex-wrap mb-2">
+                                @foreach (var img in Model.ExistingImages)
+                                {
+                                    <div class="position-relative me-2 mb-2 existing-image-container">
+                                        <img src="@img.ImageUrl" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;" alt="Existing Image" />
+                                        </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted">Chưa có ảnh nào được tải lên.</p>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ImageFiles" class="form-label">Tải lên ảnh mới (nếu muốn thay đổi/thêm):</label>
+                        <input asp-for="ImageFiles" type="file" multiple class="form-control" accept="image/*" />
+                        <span asp-validation-for="ImageFiles" class="text-danger"></span>
+                        <small class="form-text text-muted">Tối đa 5 ảnh, mỗi ảnh không quá 5MB. Ảnh mới sẽ được thêm vào.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-action="Details" asp-route-id="@Model.ItemId" class="btn btn-outline-secondary">Hủy</a>
+                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
 
 @section Scripts {
-    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function toggleExchangeWishes() {
+            var itemType = document.getElementById("Type").value;
+            var exchangeWishesField = document.getElementById("exchangeWishesField");
+            if (itemType === "@((int)EcoConnect_Hanoi.Models.CommunityItems.ItemType.Giveaway).ToString()") {
+                exchangeWishesField.style.display = "none";
+                document.getElementById("ExchangeWishes").value = "";
+            } else {
+                exchangeWishesField.style.display = "block";
+            }
+        }
+
+        // Gọi hàm khi tải trang để thiết lập trạng thái ban đầu
+        document.addEventListener('DOMContentLoaded', toggleExchangeWishes);
+
+        // JavaScript cho việc xóa ảnh (nếu bạn muốn triển khai)
+        // function removeImage(imageId) {
+        //     if (confirm("Bạn có chắc muốn xóa ảnh này?")) {
+        //         // Gửi yêu cầu AJAX đến một action trong controller để xóa ảnh
+        //         // Sau khi xóa thành công, remove phần tử ảnh khỏi DOM
+        //         // Ví dụ: $.post("/CommunityItem/DeleteImage", { imageId: imageId }, function() { ... });
+        //     }
+        // }
+    </script>
 }
+<style>
+    .existing-image-container {
+        width: 100px;
+        height: 100px;
+        overflow: hidden;
+        border: 1px solid #ddd;
+        border-radius: .25rem;
+    }
+    .existing-image-container img {
+        width: 100%;
+        height: 100%;
+    }
+</style>

@@ -1,19 +1,23 @@
-@page
-@model EcoConnect_Hanoi.Views.Account.AccessDenied
-
 @{
-    Layout = null;
+    ViewData["Title"] = "Truy cập bị từ chối";
+    Layout = "_Layout"; // Hoặc layout ưa thích của bạn
 }
 
-<!DOCTYPE html>
-
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-<div>
-    
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 text-center">
+            <h1 class="display-4 text-danger">403 - Lỗi truy cập</h1>
+            <p class="lead">Bạn không có quyền truy cập vào tài nguyên này.</p>
+            <p>
+                Nếu bạn tin rằng đây là một lỗi, vui lòng liên hệ với quản trị viên.
+            </p>
+            <a href="@Url.Action("Index", "Home")" class="btn btn-primary mt-3">Quay về trang chủ</a>
+            @if (User.Identity.IsAuthenticated)
+            {
+                <form asp-controller="Account" asp-action="Logout" method="post" class="d-inline">
+                    <button type="submit" class="btn btn-outline-secondary mt-3 ms-2">Đăng xuất</button>
+                </form>
+            }
+        </div>
+    </div>
 </div>
-</body>
-</html>

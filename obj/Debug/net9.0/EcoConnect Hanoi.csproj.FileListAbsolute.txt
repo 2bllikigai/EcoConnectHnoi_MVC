@@ -680,3 +680,4 @@ D:\EcoConnect Hanoi\obj\Debug\net9.0\compressed\3jijznh9jr-nn28iqruah.gz
 D:\EcoConnect Hanoi\obj\Debug\net9.0\compressed\rcvjtpwdn3-fwvbccg837.gz
 D:\EcoConnect Hanoi\obj\Debug\net9.0\compressed\vp702g44c6-iu5xcm37f9.gz
 D:\EcoConnect Hanoi\obj\Debug\net9.0\compressed\vxsmi2e7x0-oiqtukdj39.gz
+D:\EcoConnect Hanoi\obj\Debug\net9.0\EcoConnect Hanoi.sourcelink.json

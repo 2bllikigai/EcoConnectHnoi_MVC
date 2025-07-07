@@ -15,7 +15,7 @@ namespace EcoConnect_Hanoi.Controllers
         {
             _context = context;
         }
-
+        [AllowAnonymous]
         public async Task<IActionResult> Index()
         {
             // Mặc định không có thông tin người dùng

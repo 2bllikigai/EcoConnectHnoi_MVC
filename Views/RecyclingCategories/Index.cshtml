@@ -1,19 +1,60 @@
-@page
-@model EcoConnect_Hanoi.Views.RecyclingCategories.Index
+@model IEnumerable<EcoConnect_Hanoi.Models.RecyclingCategory>
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Phân loại & Tái chế";
+    Layout = "_Layout";
 }
 
-<!DOCTYPE html>
+<div class="container mt-4">
+    <h1 class="mb-4">Hướng dẫn Phân loại & Tái chế</h1>
 
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-<div>
-    
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info" role="alert">
+            Chưa có thông tin về các loại rác tái chế. Vui lòng quay lại sau.
+        </div>
+    }
+    else
+    {
+        <div class="row">
+            @foreach (var category in Model)
+            {
+                <div class="col-md-4 mb-4">
+                    <div class="card h-100 shadow-sm">
+                        @if (!string.IsNullOrEmpty(category.ImageUrl))
+                        {
+                            <img src="@category.ImageUrl" class="card-img-top" alt="@category.Name" style="height: 200px; object-fit: cover;">
+                        }
+                        else
+                        {
+                            <img src="https://via.placeholder.com/200?text=No+Image" class="card-img-top" alt="No Image" style="height: 200px; object-fit: cover;">
+                        }
+                        <div class="card-body d-flex flex-column">
+                            <h5 class="card-title">@category.Name</h5>
+                            <p class="card-text text-muted flex-grow-1">@category.Description</p>
+                            <div class="mt-auto">
+                                <a asp-action="Details" asp-route-id="@category.CategoryId" class="btn btn-outline-primary btn-sm">Xem chi tiết</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+
+    <div class="mt-5 text-center">
+        <h4>Tìm kiếm Trung tâm Tái chế gần nhất?</h4>
+        <p>Kiểm tra danh sách các trung tâm thu gom và tái chế gần bạn.</p>
+        <a asp-action="RecyclingCenters" class="btn btn-info">Tìm Trung tâm Tái chế</a>
+    </div>
 </div>
-</body>
-</html>
+@section Styles
+{ <style>
+    .container {
+        display : flex;
+        flex-direction: column;
+        
+    }
+</style>
+}
+}

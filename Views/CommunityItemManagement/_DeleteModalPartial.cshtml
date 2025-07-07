@@ -1,19 +1,25 @@
-@page
-@model EcoConnect_Hanoi.Views.CommunityItemManagement._DeleteModalPartial
+@model EcoConnect_Hanoi.Models.CommunityItems
 
-@{
-    Layout = null;
-}
-
-<!DOCTYPE html>
-
-<html>
-<head>
-    <title></title>
-</head>
-<body>
-<div>
-    
+@* Đây là nội dung hiển thị bên trong modal xác nhận xóa *@
+<div class="alert alert-danger" role="alert">
+    Bạn có chắc chắn muốn xóa tin đăng "<strong>@Model.Title</strong>" của người dùng "<strong>@Model.User.FullName</strong>" không?
+    Hành động này không thể hoàn tác.
 </div>
-</body>
-</html>
+
+<dl class="row">
+    <dt class="col-sm-4">Tiêu đề:</dt>
+    <dd class="col-sm-8">@Model.Title</dd>
+
+    <dt class="col-sm-4">Người đăng:</dt>
+    <dd class="col-sm-8">@Model.User.FullName</dd>
+
+    <dt class="col-sm-4">Ngày đăng:</dt>
+    <dd class="col-sm-8">@Model.CreatedAt.ToString("dd/MM/yyyy")</dd>
+</dl>
+
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+    <form asp-area="Admin" asp-controller="CommunityItemManagement" asp-action="Delete" asp-route-id="@Model.ItemId" method="post" class="d-inline">
+        <button type="submit" class="btn btn-danger">Xóa</button>
+    </form>
+</div>
