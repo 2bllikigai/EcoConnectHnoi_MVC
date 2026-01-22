@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using EcoConnect_Hanoi.Data;
-using EcoConnect_Hanoi.Models;
+using EcoConnect_Hanoi.Models; // Đã bao gồm các Enum và Model mới
 using Microsoft.AspNetCore.Authorization;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,16 +12,16 @@ namespace EcoConnect_Hanoi.Areas.Admin.Controllers
     [Authorize(Roles = "Admin")]
     public class CommunityItemManagementController : Controller
     {
-        private readonly EcoConnect_Hanoi.Data.EcoConnectHnContext _context;
+        private readonly EcoConnectHnContext _context;
 
         public CommunityItemManagementController(EcoConnectHnContext context)
         {
             _context = context;
         }
 
-        // Index Action (giữ nguyên)
-        public async Task<IActionResult> Index(string searchString,
-            EcoConnect_Hanoi.Models.CommunityItems.ItemStatus? statusFilter)
+        // 1. Index Action: Hiển thị danh sách hàng hóa
+        // Đã sửa: Sử dụng trực tiếp ItemStatus? thay vì đường dẫn dài
+        public async Task<IActionResult> Index(string searchString, ItemStatus? statusFilter)
         {
             var items = _context.CommunityItems
                 .Include(ci => ci.User)
@@ -40,17 +40,19 @@ namespace EcoConnect_Hanoi.Areas.Admin.Controllers
 
             ViewData["CurrentSearch"] = searchString;
             ViewData["CurrentStatusFilter"] = statusFilter;
-            ViewBag.ItemStatuses = Enum.GetValues(typeof(EcoConnect_Hanoi.Models.CommunityItems.ItemStatus))
-                .Cast<EcoConnect_Hanoi.Models.CommunityItems.ItemStatus>().ToList();
+            
+            // Đã sửa: Cast trực tiếp từ ItemStatus
+            ViewBag.ItemStatuses = Enum.GetValues(typeof(ItemStatus))
+                .Cast<ItemStatus>().ToList();
 
-            // Lấy số lượng tin chờ duyệt cho nút "Tin chờ duyệt"
+            // Đã sửa: Lấy số lượng tin chờ duyệt (Status == Reserved)
             ViewBag.PendingItemsForReview = await _context.CommunityItems.CountAsync(ci =>
-                ci.Status == EcoConnect_Hanoi.Models.CommunityItems.ItemStatus.Reserved);
+                ci.Status == ItemStatus.Reserved);
 
             return View(await items.OrderByDescending(i => i.CreatedAt).ToListAsync());
         }
 
-        // Action mới cho Modal Details
+        // 2. Action cho Modal Details
         [HttpGet]
         public async Task<IActionResult> DetailsPartial(int id)
         {
@@ -59,15 +61,13 @@ namespace EcoConnect_Hanoi.Areas.Admin.Controllers
                 .Include(ci => ci.ItemCategory)
                 .Include(ci => ci.Images)
                 .FirstOrDefaultAsync(m => m.ItemId == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
 
-            return PartialView("_DetailsModalPartial", item); // Trả về Partial View cho Modal
+            if (item == null) return NotFound();
+
+            return PartialView("_DetailsModalPartial", item);
         }
 
-        // Action mới cho Modal Delete Confirmation
+        // 3. Action cho Modal Delete Confirmation
         [HttpGet]
         public async Task<IActionResult> DeleteConfirmationPartial(int id)
         {
@@ -75,15 +75,13 @@ namespace EcoConnect_Hanoi.Areas.Admin.Controllers
                 .Include(ci => ci.User)
                 .Include(ci => ci.ItemCategory)
                 .FirstOrDefaultAsync(m => m.ItemId == id);
-            if (item == null)
-            {
-                return NotFound();
-            }
 
-            return PartialView("_DeleteModalPartial", item); // Trả về Partial View cho Modal
+            if (item == null) return NotFound();
+
+            return PartialView("_DeleteModalPartial", item);
         }
 
-        // Giữ nguyên ApproveItem và RejectItem cho phần Review
+        // 4. Duyệt tin (Approve)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> ApproveItem(int id)
@@ -91,13 +89,15 @@ namespace EcoConnect_Hanoi.Areas.Admin.Controllers
             var item = await _context.CommunityItems.FindAsync(id);
             if (item == null) return NotFound();
 
-            item.Status = EcoConnect_Hanoi.Models.CommunityItems.ItemStatus.Completed; // Sử dụng đúng enum
+            item.Status = ItemStatus.Completed; // Chuyển trạng thái sang Completed
             _context.Update(item);
             await _context.SaveChangesAsync();
+            
             TempData["SuccessMessage"] = "Tin đăng đã được duyệt thành công.";
-            return RedirectToAction(nameof(Review)); // Hoặc Index tùy thuộc vào luồng bạn muốn
+            return RedirectToAction(nameof(Review));
         }
 
+        // 5. Từ chối tin (Reject)
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> RejectItem(int id, string? reason)
@@ -105,74 +105,57 @@ namespace EcoConnect_Hanoi.Areas.Admin.Controllers
             var item = await _context.CommunityItems.FindAsync(id);
             if (item == null) return NotFound();
 
-            item.Status = EcoConnect_Hanoi.Models.CommunityItems.ItemStatus.Available; // Sử dụng đúng enum
-            // ... (logic lưu lý do từ chối)
+            item.Status = ItemStatus.Available; // Trả lại trạng thái Available
+            // Lưu lý do từ chối nếu bạn có thuộc tính Note/Reason trong Model
             _context.Update(item);
             await _context.SaveChangesAsync();
+            
             TempData["ErrorMessage"] = "Tin đăng đã bị từ chối.";
-            return RedirectToAction(nameof(Review)); // Hoặc Index
+            return RedirectToAction(nameof(Review));
         }
 
-        // Giữ nguyên Edit và DeleteConfirmed
-        // GET: Admin/CommunityItemManagement/Edit/{id}
+        // 6. Chỉnh sửa (Edit) - GET
         [HttpGet]
         public async Task<IActionResult> Edit(int id)
         {
             var item = await _context.CommunityItems.FindAsync(id);
             if (item == null) return NotFound();
+
             ViewBag.ItemCategories = await _context.ItemCategories.ToListAsync();
             ViewBag.Users = await _context.Users.ToListAsync();
             return View(item);
         }
 
+        // 7. Chỉnh sửa (Edit) - POST
+        // Đã sửa: Tham số truyền vào là CommunityItem (số ít)
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, EcoConnect_Hanoi.Models.CommunityItems item)
+        public async Task<IActionResult> Edit(int id, CommunityItem item)
         {
             if (id != item.ItemId) return NotFound();
-
-            var existingItem = await _context.CommunityItems.AsNoTracking().FirstOrDefaultAsync(i => i.ItemId == id);
-            if (existingItem == null) return NotFound();
 
             if (ModelState.IsValid)
             {
                 try
                 {
-                    existingItem.Title = item.Title;
-                    existingItem.Description = item.Description;
-                    existingItem.ItemCategoryId = item.ItemCategoryId;
-                    existingItem.OwnerUserId = item.OwnerUserId;
-                    existingItem.Type = item.Type;
-                    existingItem.ItemCondition = item.ItemCondition;
-                    existingItem.PreferredLocation = item.PreferredLocation;
-                    existingItem.CreatedAt = item.CreatedAt;
-                    existingItem.Status = item.Status;
-
-                    _context.Update(existingItem);
+                    _context.Update(item);
                     await _context.SaveChangesAsync();
                     TempData["SuccessMessage"] = "Tin đăng đã được cập nhật.";
-                    return RedirectToAction(nameof(Index), new { area = "Admin" });
+                    return RedirectToAction(nameof(Index));
                 }
                 catch (DbUpdateConcurrencyException)
                 {
-                    if (!CommunityItemExists(item.ItemId))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        throw;
-                    }
+                    if (!CommunityItemExists(item.ItemId)) return NotFound();
+                    else throw;
                 }
             }
-
             ViewBag.ItemCategories = await _context.ItemCategories.ToListAsync();
             ViewBag.Users = await _context.Users.ToListAsync();
             return View(item);
         }
 
-        // POST: Admin/CommunityItemManagement/DeleteConfirmed/{id}
-        [HttpPost, ActionName("Delete")] // Tên Action vẫn là "Delete" nhưng dùng HttpPost
+        // 8. Xóa vĩnh viễn
+        [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
@@ -183,23 +166,16 @@ namespace EcoConnect_Hanoi.Areas.Admin.Controllers
                 await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Tin đăng đã được xóa thành công.";
             }
-
             return RedirectToAction(nameof(Index));
         }
 
-        private bool CommunityItemExists(int id)
-        {
-            return _context.CommunityItems.Any(e => e.ItemId == id);
-        }
-
-        // Action Review (giữ nguyên hoặc điều chỉnh tùy ý)
+        // 9. Review Action: Xem các tin đang chờ duyệt
         public async Task<IActionResult> Review(string searchString)
         {
             var items = _context.CommunityItems
                 .Include(ci => ci.User)
                 .Include(ci => ci.ItemCategory)
-                .Where(ci =>
-                    ci.Status == EcoConnect_Hanoi.Models.CommunityItems.ItemStatus.Reserved) // Sử dụng đúng enum
+                .Where(ci => ci.Status == ItemStatus.Reserved) // Lọc các tin chờ duyệt
                 .AsQueryable();
 
             if (!string.IsNullOrEmpty(searchString))
@@ -209,6 +185,11 @@ namespace EcoConnect_Hanoi.Areas.Admin.Controllers
 
             ViewData["CurrentSearch"] = searchString;
             return View(await items.OrderByDescending(i => i.CreatedAt).ToListAsync());
+        }
+
+        private bool CommunityItemExists(int id)
+        {
+            return _context.CommunityItems.Any(e => e.ItemId == id);
         }
     }
 }

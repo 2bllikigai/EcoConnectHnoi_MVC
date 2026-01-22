@@ -63,7 +63,7 @@ namespace EcoConnect_Hanoi.Models
         [Phone(ErrorMessage = "Số điện thoại không hợp lệ.")]
         [MaxLength(20)]
         public string? PhoneNumber { get; set; }
-        public ICollection<CommunityItems> CommunityItems { get; set; } = new List<CommunityItems>();
+        public ICollection<CommunityItem> CommunityItems { get; set; } = new List<CommunityItem>();
         public string? EmailVerificationToken { get; set; }
         public DateTime? TokenExpiration { get; set; }
         public DateTime RegistrationDate { get; set; } = DateTime.Now;
