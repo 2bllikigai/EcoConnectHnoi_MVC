@@ -22,11 +22,11 @@ namespace EcoConnect_Hanoi.Models.CommunityItemViewModels
 
         [Display(Name = "Tình trạng sản phẩm")]
         [Required(ErrorMessage = "Tình trạng sản phẩm là bắt buộc.")]
-        public CommunityItems.ItemCondittions ItemCondition { get; set; }
+        public ItemCondittion ItemCondition { get; set; }
 
         [Display(Name = "Loại giao dịch")]
         [Required(ErrorMessage = "Loại giao dịch là bắt buộc.")]
-        public CommunityItems.ItemType Type { get; set; }
+        public CommunityItem.ItemType Type { get; set; }
 
         [Display(Name = "Địa điểm ưu tiên")]
         [MaxLength(100, ErrorMessage = "Địa điểm ưu tiên không được vượt quá 100 ký tự.")]

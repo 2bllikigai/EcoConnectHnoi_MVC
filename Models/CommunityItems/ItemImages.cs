@@ -13,7 +13,7 @@ public class ItemImages
     public int ItemId { get; set; }
     [Required]
 
-    public CommunityItems CommunityItem { get; set; }
+    public CommunityItem CommunityItem { get; set; }
 
     [Required]
     public string ImageUrl { get; set; }

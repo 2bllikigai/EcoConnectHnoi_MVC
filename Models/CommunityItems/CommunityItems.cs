@@ -1,21 +1,13 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-
+using EcoConnect_Hanoi.Models.Enums;
 namespace EcoConnect_Hanoi.Models;
 
-// Đưa Enum ra ngoài class để dễ gọi ở View và Controller
-public enum ItemCondittions
-{
-    New,
-    LikeNew,
-    UsedGood, 
-    UsedFair,
-}
 
 public enum ItemType
 {
-    Giveaway,
-    Exchange
+    Giveaway =1,
+    Exchange =2
 }
 
 public enum ItemStatus
@@ -46,10 +38,10 @@ public class CommunityItem // Đổi thành số ít để tránh lỗi "Type na
 
     [ForeignKey("ItemCategory")]
     public int ItemCategoryId { get; set; }
-    public ItemCategories ItemCategory { get; set; }
+    public ItemCategory ItemCategory { get; set; }
 
     // Gọi trực tiếp enum đã đưa ra ngoài
-    public ItemCondittions ItemCondition { get; set; }
+    public ItemCondittion ItemCondition { get; set; }
     public ItemType Type { get; set; }
 
     [MaxLength(100)]
