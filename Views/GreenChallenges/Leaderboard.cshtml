@@ -1,0 +1,42 @@
+@model List<EcoConnect_Hanoi.Models.LeaderboardViewModel>
+
+@{
+ViewData["Title"] = "Bảng Xếp Hạng";
+}
+
+<div class="container mt-5">
+    <h1 class="mb-4">🏆 Bảng Xếp Hạng Thử thách Xanh</h1>
+
+    <table class="table table-striped table-hover shadow-sm">
+        <thead class="table-success">
+        <tr>
+            <th>#</th>
+            <th>Tên người dùng</th>
+            <th>Điểm EcoPoints</th>
+            <th>Thử thách đã hoàn thành</th>
+        </tr>
+        </thead>
+        <tbody>
+        @if (Model != null && Model.Count > 0)
+        {
+        int rank = 1;
+        foreach (var user in Model)
+        {
+        <tr>
+            <td>@rank</td>
+            <td>@user.UserName</td>
+            <td>@user.EcoPoints</td>
+            <td>@user.CompletedChallenges</td>
+        </tr>
+        rank++;
+        }
+        }
+        else
+        {
+        <tr>
+            <td colspan="4" class="text-center">Chưa có dữ liệu bảng xếp hạng.</td>
+        </tr>
+        }
+        </tbody>
+    </table>
+</div>

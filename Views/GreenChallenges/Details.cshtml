@@ -1,0 +1,112 @@
+@model EcoConnect_Hanoi.Models.Challenge
+
+@{
+    ViewData["Title"] = @Model.Title + " - Chi tiết thử thách";
+    Layout = "_Layout";
+}
+
+<div class="container mt-4">
+    <div class="row justify-content-center">
+        <div class="col-md-10">
+            <div class="card shadow-sm">
+                @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                {
+                    <img src="@Model.ImageUrl" class="card-img-top" alt="@Model.Title" style="height: 350px; object-fit: cover;">
+                }
+                else
+                {
+                    <img src="https://via.placeholder.com/350?text=Challenge" class="card-img-top" alt="Challenge Image" style="height: 350px; object-fit: cover;">
+                }
+                <div class="card-body">
+                    <h1 class="card-title text-success mb-3">@Model.Title</h1>
+
+                    <p class="card-text"><strong>Mô tả:</strong> @Html.Raw(Model.Description.Replace("\n", "<br/>"))</p>
+                    <p class="card-text"><strong>Thời gian:</strong> Từ @Model.StartDate.ToString("dd/MM/yyyy") đến @Model.EndDate.ToString("dd/MM/yyyy")</p>
+                    <p class="card-text"><strong>Điểm thưởng:</strong> <span class="badge bg-primary">@Model.RewardPoints EcoPoints</span></p>
+                    <p class="card-text">
+                        <strong>Trạng thái:</strong>
+                        @if (Model.Status == EcoConnect_Hanoi.Models.ChallengeStatus.Active)
+                        {
+                            <span class="badge bg-success">Đang diễn ra</span>
+                        }
+                        else if (Model.Status == EcoConnect_Hanoi.Models.ChallengeStatus.Upcoming)
+                        {
+                            <span class="badge bg-warning text-dark">Sắp diễn ra</span>
+                        }
+                        else if (Model.Status == EcoConnect_Hanoi.Models.ChallengeStatus.Completed)
+                        {
+                            <span class="badge bg-secondary">Đã hoàn thành</span>
+                        }
+                        else
+                        {
+                            <span class="badge bg-danger">Đã hủy</span>
+                        }
+                    </p>
+
+                    <hr />
+
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        var userChallenge = ViewBag.UserChallenge as EcoConnect_Hanoi.Models.UserChallenge;
+
+                        if (userChallenge != null)
+                        {
+                            <div class="alert alert-info" role="alert">
+                                Bạn đã tham gia thử thách này.
+                                <br />
+                                <strong>Tiến độ của bạn:</strong> <span class="badge bg-info">@userChallenge.Progress%</span>
+                                <br />
+                                <strong>Trạng thái của bạn:</strong>
+                                @if (userChallenge.Status == EcoConnect_Hanoi.Models.UserChallengeStatus.Completed)
+                                {
+                                    <span class="badge bg-success">Đã hoàn thành</span>
+                                }
+                                else if (userChallenge.Status == EcoConnect_Hanoi.Models.UserChallengeStatus.InProgress)
+                                {
+                                    <span class="badge bg-primary">Đang thực hiện</span>
+                                }
+                                else if (userChallenge.Status == EcoConnect_Hanoi.Models.UserChallengeStatus.Failed)
+                                {
+                                    <span class="badge bg-danger">Thất bại</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-secondary">@userChallenge.Status</span>
+                                }
+                                @if (userChallenge.Status != EcoConnect_Hanoi.Models.UserChallengeStatus.Completed && userChallenge.Status != EcoConnect_Hanoi.Models.UserChallengeStatus.Failed)
+                                {
+                                    <form asp-action="UpdateProgress" asp-route-id="@userChallenge.UserChallengeId" method="post" class="mt-3">
+                                        <div class="input-group mb-3" style="max-width: 300px;">
+                                            <input type="number" name="progress" class="form-control" value="@userChallenge.Progress" min="0" max="100" placeholder="Cập nhật tiến độ" required>
+                                            <button type="submit" class="btn btn-warning">Cập nhật Tiến độ</button>
+                                        </div>
+                                    </form>
+                                }
+                            </div>
+                        }
+                        else if (Model.Status == EcoConnect_Hanoi.Models.ChallengeStatus.Active || Model.Status == EcoConnect_Hanoi.Models.ChallengeStatus.Upcoming)
+                        {
+                            <form asp-action="Enroll" asp-route-id="@Model.ChallengeId" method="post">
+                                <button type="submit" class="btn btn-success btn-lg">Tham gia Thử thách</button>
+                            </form>
+                        }
+                        else
+                        {
+                            <div class="alert alert-warning" role="alert">Thử thách này hiện không thể tham gia.</div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="alert alert-info" role="alert">
+                            <a asp-controller="Account" asp-action="Login">Đăng nhập</a> để tham gia thử thách này và nhận EcoPoints!
+                        </div>
+                    }
+
+                    <div class="mt-4">
+                        <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách thử thách</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,340 @@
+@model EcoConnect_Hanoi.Controllers.AccountController.ProfileDashboardViewModel
+@{
+    ViewData["Title"] = "Dashboard của tôi";
+    Layout = "~/Views/Shared/_Layout.cshtml"; // Sử dụng layout chính của bạn
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/profile-dashboard.css" />
+    <style>
+        /* Base styles for the dashboard layout */
+        .dashboard-container {
+            display: flex;
+            min-height: calc(100vh - 150px); /* Khoảng cách từ header đến footer */
+            max-width: 1200px;
+            margin: 30px auto;
+            background-color: #fff;
+            box-shadow: 0 0 15px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        /* Side navigation bar */
+        .sidebar {
+            width: 250px;
+            background-color: #f0f8f0; /* Light green background */
+            padding: 20px;
+            border-right: 1px solid #e0e0e0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .sidebar h2 {
+            color: #28a745;
+            margin-bottom: 25px;
+            text-align: center;
+        }
+
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .sidebar ul li {
+            margin-bottom: 10px;
+        }
+
+        .sidebar ul li a {
+            display: block;
+            padding: 12px 15px;
+            color: #333;
+            text-decoration: none;
+            border-radius: 5px;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .sidebar ul li a:hover {
+            background-color: #d4edda;
+            color: #1e7e34;
+        }
+
+        .sidebar ul li a.active {
+            background-color: #28a745;
+            color: #fff;
+            font-weight: bold;
+        }
+
+        /* Main content area */
+        .main-content {
+            flex-grow: 1;
+            padding: 30px;
+            background-color: #ffffff;
+        }
+
+        .content-section {
+            display: none; /* Hidden by default, shown by JS */
+            margin-bottom: 40px;
+        }
+
+        .content-section.active {
+            display: block;
+        }
+
+        .content-section h3 {
+            color: #4CAF50;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 10px;
+        }
+
+        /* Specific styles for User Info section */
+        .user-info p {
+            margin: 10px 0;
+            font-size: 1.1em;
+        }
+        .user-info strong {
+            color: #28a745;
+        }
+
+        /* Table styles (reused from previous examples) */
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        .table th, .table td {
+            border: 1px solid #ddd;
+            padding: 10px;
+            text-align: left;
+        }
+        .table th {
+            background-color: #f2f2f2;
+            font-weight: bold;
+        }
+        .table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .table tbody tr:hover {
+            background-color: #e9e9e9;
+        }
+        .no-data {
+            text-align: center;
+            color: #666;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        /* Responsive adjustments */
+        @@media (max-width: 768px) {
+            .dashboard-container {
+                flex-direction: column;
+                margin: 15px;
+            }
+            .sidebar {
+                width: 100%;
+                border-right: none;
+                border-bottom: 1px solid #e0e0e0;
+            }
+            .sidebar ul {
+                display: flex;
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .sidebar ul li {
+                margin: 5px;
+            }
+            .sidebar ul li a {
+                padding: 8px 12px;
+                font-size: 0.9em;
+            }
+            .main-content {
+                padding: 20px;
+            }
+        }
+    </style>
+}
+
+<div class="dashboard-container">
+    <div class="sidebar">
+        <h2>Dashboard của tôi</h2>
+        <ul>
+            <li><a href="#" class="nav-link active" data-target="user-info">Thông tin cá nhân</a></li>
+            <li><a href="#" class="nav-link" data-target="donations-history">Lịch sử cho/tặng</a></li>
+            <li><a href="#" class="nav-link" data-target="collections-history">Lịch sử thu gom</a></li>
+            <li><a href="#" class="nav-link" data-target="challenges-score">Điểm thử thách</a></li>
+            <li>
+                <form asp-controller="Account" asp-action="Logout" method="post" style="width: 100%;">
+                    <button type="submit" class="nav-link logout-btn" style="width:100%; border:none; background:none; text-align:left; padding:12px 15px; cursor:pointer; color: #dc3545;">Đăng xuất</button>
+                </form>
+            </li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div id="user-info" class="content-section active">
+            <h3>Thông tin cá nhân của bạn</h3>
+            <div class="user-info">
+                <p><strong>Họ và tên:</strong> @Model.User.FullName</p>
+                <p><strong>Email:</strong> @Model.User.Email</p>
+                <p><strong>Ngày đăng ký:</strong> @Model.User.RegistrationDate.ToString("dd/MM/yyyy")</p>
+                <p><strong>Địa chỉ:</strong> @Model.User.LivingArea</p>
+                <p><strong>Điểm Eco:</strong> @Model.User.EcoPoints</p>
+                <p><strong>Điểm Hoạt động:</strong> @Model.User.ActivityScore</p>
+                @* Bạn có thể thêm nút chỉnh sửa thông tin tại đây *@
+                <a href="#" class="btn btn-sm">Chỉnh sửa thông tin</a>
+            </div>
+        </div>
+
+        <div id="donations-history" class="content-section">
+            <h3>Lịch sử cho/tặng đồ cũ</h3>
+            @if (Model.CommunityItems != null && Model.CommunityItems.Any())
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Tên đồ</th>
+                            <th>Mô tả</th>
+                            <th>Ngày đăng</th>
+                            <th>Trạng thái</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var item in Model.CommunityItems)
+                        {
+                            <tr>
+                                <td>@item.Title</td>
+                                <td>@item.Description</td>
+                                <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                                <td>@item.Status</td> @* Giả sử có thuộc tính Status *@
+                                <td><a href="/CommunityItem/Details/@item.ItemId">Chi tiết</a></td> @* Đảm bảo Id đúng *@
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="no-data">Bạn chưa có món đồ nào được cho/tặng.</p>
+            }
+        </div>
+
+        <div id="collections-history" class="content-section">
+            <h3>Lịch sử thu gom rác</h3>
+            @if (Model.WasteCollections != null && Model.WasteCollections.Any())
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Ngày thu gom</th>
+                            <th>Loại rác</th>
+                            <th>Khối lượng (kg)</th>
+                            <th>Điểm Eco nhận được</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var collection in Model.WasteCollections)
+                        {
+                            <tr>
+                                <td>@collection.CollectionDate.ToString("dd/MM/yyyy")</td>
+                                <td>@collection.WasteType</td>
+                                <td>@collection.WeightKg</td>
+                                <td>@collection.EcoPointsEarned</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="no-data">Bạn chưa có lịch sử thu gom rác nào.</p>
+            }
+        </div>
+
+        <div id="challenges-score" class="content-section">
+            <h3>Điểm thử thách xanh</h3>
+            <div class="user-info">
+                <p><strong>Tổng điểm Eco:</strong> @Model.User.EcoPoints</p>
+                <p><strong>Điểm Hoạt động:</strong> @Model.User.ActivityScore</p>
+            </div>
+            @if (Model.ChallengeParticipations != null && Model.ChallengeParticipations.Any())
+            {
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Thử thách</th>
+                            <th>Ngày hoàn thành</th>
+                            <th>Điểm nhận được</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var challenge in Model.ChallengeParticipations)
+                        {
+                            <tr>
+                                <td>@challenge.ChallengeName</td>
+                                <td>@challenge.DateCompleted.ToString("dd/MM/yyyy")</td>
+                                <td>@challenge.PointsEarned</td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+            }
+            else
+            {
+                <p class="no-data">Bạn chưa có lịch sử tham gia thử thách nào.</p>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const navLinks = document.querySelectorAll(".nav-link");
+            const contentSections = document.querySelectorAll(".content-section");
+
+            function showSection(targetId) {
+                // Hide all sections
+                contentSections.forEach(section => {
+                    section.classList.remove("active");
+                });
+
+                // Show the target section
+                const targetSection = document.getElementById(targetId);
+                if (targetSection) {
+                    targetSection.classList.add("active");
+                }
+
+                // Update active class on nav links
+                navLinks.forEach(link => {
+                    link.classList.remove("active");
+                    if (link.getAttribute("data-target") === targetId) {
+                        link.classList.add("active");
+                    }
+                });
+            }
+
+            navLinks.forEach(link => {
+                link.addEventListener("click", function (e) {
+                    // Tránh xử lý click cho nút logout
+                    if (this.classList.contains('logout-btn')) {
+                        return; // Để form submit tự nhiên
+                    }
+                    e.preventDefault(); // Prevent default link behavior
+                    const targetId = this.getAttribute("data-target");
+                    if (targetId) {
+                        showSection(targetId);
+                    }
+                });
+            });
+
+            // Show the first section by default (Thông tin cá nhân)
+            // if (contentSections.length > 0) {
+            //     contentSections[0].classList.add("active");
+            //     navLinks[0].classList.add("active");
+            // }
+            // Logic đã được xử lý bằng cách thêm class 'active' vào phần tử mặc định trong HTML
+        });
+    </script>
+}

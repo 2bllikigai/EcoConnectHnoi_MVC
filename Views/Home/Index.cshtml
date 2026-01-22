@@ -1,0 +1,189 @@
+﻿@{
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var isLoggedIn = User.Identity.IsAuthenticated;
+}
+
+@section Styles {
+    <link rel="stylesheet" href="~/css/home.css" />
+    <style>
+        .dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: #f9f9f9;
+            min-width: 160px;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+            z-index: 1;
+            right: 0;
+            border-radius: 5px;
+            overflow: hidden;
+        }
+
+        .dropdown-content a, .dropdown-content form button {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+            text-align: left;
+            background: none;
+            border: none;
+            width: 100%;
+        }
+
+        .dropdown-content a:hover, .dropdown-content form button:hover {
+            background-color: #f1f1f1;
+        }
+
+        .dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        .nav a.account-link {
+            padding: 8px 15px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            background-color: #f0f0f0;
+            color: #333;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+        .nav a.account-link:hover {
+            background-color: #e0e0e0;
+        }
+
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
+            color: white;
+        }
+
+        .btn-danger {
+            transition: all 0.3s ease;
+        }
+    </style>
+}
+
+<div class="header">
+    <div class="logo">♻️ EcoConnect Hanoi</div>
+    <div class="nav">
+        <a href="/">Trang chủ</a>
+        <a href="/RecyclingCategories">Phân loại & Tái chế</a>
+        <a href="/CollectionSchedules">Lịch thu gom</a>
+        <a href="/CommunityItem">Chợ đồ cũ</a>
+        <a href="/GreenChallenges">Thử thách xanh</a>
+        @if (isLoggedIn)
+        {
+            <div class="dropdown">
+                <a href="#" class="account-link">Tài khoản ▼</a>
+                <div class="dropdown-content">
+                    <a href="/Account/Profile">Thông tin cá nhân</a>
+                    <form asp-controller="Account" asp-action="Logout" method="post">
+                        <button type="submit" class="btn btn-danger">Đăng xuất</button>
+                    </form>
+                </div>
+            </div>
+        }
+        else
+        {
+            <a href="/Account/Login">Đăng nhập / Đăng ký</a>
+        }
+    </div>
+</div>
+
+<div class="hero">
+    <h1>Kết nối cộng đồng vì Hà Nội xanh sạch đẹp 🌿</h1>
+    <p>Phân loại rác, tặng đồ cũ, tích điểm sống xanh và cùng nhau tạo nên sự thay đổi.</p>
+    <div class="hero-buttons">
+        <a href="/CommunityItem/Create" class="btn">📦 Bắt đầu tặng đồ</a>
+        <a href="/CollectionSchedules" class="btn">📅 Xem lịch thu gom</a>
+    </div>
+</div>
+
+<div class="feature-title">🌱 Các tính năng chính</div>
+<div class="features">
+    <div class="feature">
+        <div class="icon">♻️</div>
+        <h3>Phân loại & Tái chế</h3>
+        <p>Hướng dẫn chi tiết cách phân loại rác tại nhà.</p>
+        <a href="/RecyclingCategories" class="btn">Xem hướng dẫn</a>
+    </div>
+    <div class="feature">
+        <div class="icon">🗓️</div>
+        <h3>Lịch thu gom</h3>
+        <p>Xem lịch thu gom tại nơi bạn sống.</p>
+        <a href="/CollectionSchedules" class="btn">Tìm lịch thu gom</a>
+    </div>
+    <div class="feature">
+        <div class="icon">🎁</div>
+        <h3>Chợ đồ cũ</h3>
+        <p>Cho/tặng đồ cũ còn dùng tốt – kết nối cộng đồng.</p>
+        <a href="/CommunityItem" class="btn">Xem đồ đang tặng</a>
+    </div>
+    <div class="feature">
+        <div class="icon">🏆</div>
+        <h3>Thử thách xanh</h3>
+        <p>Tham gia thử thách sống xanh và tích điểm!</p>
+        <a href="/GreenChallenges/MyChallenges" class="btn">Tham gia ngay</a>
+    </div>
+</div>
+
+<div class="gamification">
+    <h2>🎯 Tích điểm & Thành tựu</h2>
+
+    <div class="eco-score-card">
+        <div class="eco-score-header">
+            <h3>Điểm Eco của bạn</h3>
+            <a href="/Leaderboard" class="btn">Xem bảng xếp hạng</a>
+        </div>
+        <p>Đăng nhập để xem và tích lũy điểm!</p>
+        <div class="progress-bar-container">
+            <div id="ecoProgressBar" class="progress-bar" style="width: 0%;"></div>
+        </div>
+        <div class="progress-labels">
+            <span id="currentEcoPoints">0 điểm</span>
+            <span>Mục tiêu: 1000 điểm</span>
+        </div>
+    </div>
+
+    <div class="stats-container">
+        <div class="stat-item">
+            <span>120+</span>
+            <p>Món đồ đã được cho/tặng</p>
+        </div>
+        <div class="stat-item">
+            <span>200+</span>
+            <p>Kg rác tái chế</p>
+        </div>
+    </div>
+</div>
+
+<div class="partners">
+    <h2>🤝 Đối tác đồng hành</h2>
+    <div class="partner-logos">
+        <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQIDLYgdjyylTMCi2i4B9_VkSqRZkjG9D6NcA&s" alt="Partner 1" />
+        <img src="https://cdn.haitrieu.com/wp-content/uploads/2021/10/Logo-DH-Dai-Nam-.png" alt="Partner 2" />
+        <img src="https://upload.wikimedia.org/wikipedia/commons/9/91/Vietnam_recycling_logo.png" alt="Partner 3" />
+    </div>
+</div>
+
+<div class="footer">
+    <div>
+        <h4>Liên hệ</h4>
+        <a href="#">Email: kieuquangtruong2005tn@gmail.com</a>
+        <a href="#">Facebook: Nguyễn Sáng</a>
+        <a href="#">Zalo OA</a>
+    </div>
+    <div>
+        <h4>Liên kết nhanh</h4>
+        <a href="#">Điều khoản sử dụng</a>
+        <a href="#">Chính sách bảo mật</a>
+    </div>
+    <div class="copyright">
+        © 2025 EcoConnect Hanoi. All rights reserved.
+    </div>
+</div>

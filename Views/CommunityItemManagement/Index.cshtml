@@ -1,0 +1,156 @@
+@model IEnumerable<EcoConnect_Hanoi.Models.CommunityItems>
+@{
+    ViewData["Title"] = "Quản lý Chợ đồ cũ";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    <h1 class="mb-4 text-success">Quản lý Chợ đồ cũ</h1>
+
+    <form asp-area="Admin" asp-controller="CommunityItemManagement" asp-action="Index" method="get" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="searchString" class="form-control" placeholder="Tìm kiếm theo tiêu đề, mô tả..." value="@ViewData["CurrentSearch"]" />
+            <select name="statusFilter" class="form-select ms-2">
+                <option value="">Tất cả trạng thái</option>
+                @foreach (var status in (List<EcoConnect_Hanoi.Models.CommunityItems.ItemStatus>)ViewBag.ItemStatuses)
+                {
+                    <option value="@status" selected="@(ViewData["CurrentStatusFilter"]?.ToString() == status.ToString())">@status.ToString()</option>
+                }
+            </select>
+            <button class="btn btn-outline-success ms-2" type="submit">Tìm kiếm & Lọc</button>
+             <a asp-area="Admin" asp-controller="CommunityItemManagement" asp-action="Review" class="btn btn-info ms-2"><i class="bi bi-clipboard-check"></i> Tin chờ duyệt (@ViewBag.PendingItemsForReview)</a>
+        </div>
+    </form>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="table-responsive">
+        <table class="table table-hover table-striped shadow-sm">
+            <thead>
+                <tr>
+                    <th>Tiêu đề</th>
+                    <th>Người đăng</th>
+                    <th>Danh mục</th>
+                    <th>Loại</th>
+                    <th>Trạng thái</th>
+                    <th>Ngày đăng</th>
+                    <th>Hành động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    <tr>
+                        <td>@item.Title</td>
+                        <td>@item.User.FullName</td>
+                        <td>@item.ItemCategory.DisplayName</td>
+                        <td>@item.Type</td>
+                        <td><span class="badge @(item.Status == EcoConnect_Hanoi.Models.CommunityItems.ItemStatus.Completed ? "bg-success" : item.Status == EcoConnect_Hanoi.Models.CommunityItems.ItemStatus.Reserved ? "bg-warning text-dark" : item.Status == EcoConnect_Hanoi.Models.CommunityItems.ItemStatus.Available ? "bg-danger" : "bg-secondary")">@item.Status</span></td>
+                        <td>@item.CreatedAt.ToString("dd/MM/yyyy")</td> @* Đã sửa từ CreatedAt sang PostedDate theo Model CommunityItems*@
+                        <td>
+                            @* Nút xem chi tiết (Mở Modal Details) *@
+                            <button type="button" class="btn btn-sm btn-secondary me-1 btn-details" data-bs-toggle="modal" data-bs-target="#detailsModal" data-item-id="@item.ItemId" title="Chi tiết">
+                                <i class="bi bi-eye"></i>
+                            </button>
+                            @* Nút chỉnh sửa (Giữ nguyên trang riêng) *@
+                            <a asp-area="Admin" asp-controller="CommunityItemManagement" asp-action="Edit" asp-route-id="@item.ItemId" class="btn btn-sm btn-info me-1" title="Chỉnh sửa">
+                                <i class="bi bi-pencil"></i>
+                            </a>
+                            @* Nút xóa (Mở Modal xác nhận xóa) *@
+                            <button type="button" class="btn btn-sm btn-danger btn-delete" data-bs-toggle="modal" data-bs-target="#deleteModal" data-item-id="@item.ItemId" title="Xóa">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>
+
+@* Modal cho Chi tiết tin đăng *@
+<div class="modal fade" id="detailsModal" tabindex="-1" aria-labelledby="detailsModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="detailsModalLabel">Chi tiết Tin đăng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="detailsModalBody">
+                <div class="text-center">
+                    <div class="spinner-border text-success" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                    <p>Đang tải chi tiết tin đăng...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@* Modal cho Xác nhận xóa tin đăng *@
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteModalLabel">Xác nhận Xóa Tin đăng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body" id="deleteModalBody">
+                <div class="text-center">
+                    <div class="spinner-border text-danger" role="status">
+                        <span class="visually-hidden">Đang tải...</span>
+                    </div>
+                    <p>Đang tải thông tin xóa...</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function () {
+            // Xử lý khi modal chi tiết được hiển thị
+            $('#detailsModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Nút đã kích hoạt modal
+                var itemId = button.data('item-id'); // Lấy ID của item từ data-item-id
+
+                // Tải nội dung Partial View vào modal body
+                $('#detailsModalBody').html('<div class="text-center"><div class="spinner-border text-success" role="status"><span class="visually-hidden">Đang tải...</span></div><p>Đang tải chi tiết tin đăng...</p></div>'); // Hiển thị spinner
+                $.get('/Admin/CommunityItemManagement/DetailsPartial/' + itemId, function (data) {
+                    $('#detailsModalBody').html(data);
+                }).fail(function() {
+                    $('#detailsModalBody').html('<div class="alert alert-danger">Không thể tải chi tiết tin đăng. Vui lòng thử lại.</div>');
+                });
+            });
+
+            // Xử lý khi modal xóa được hiển thị
+            $('#deleteModal').on('show.bs.modal', function (event) {
+                var button = $(event.relatedTarget); // Nút đã kích hoạt modal
+                var itemId = button.data('item-id'); // Lấy ID của item từ data-item-id
+
+                // Tải nội dung Partial View vào modal body
+                $('#deleteModalBody').html('<div class="text-center"><div class="spinner-border text-danger" role="status"><span class="visually-hidden">Đang tải...</span></div><p>Đang tải thông tin xóa...</p></div>'); // Hiển thị spinner
+                $.get('/Admin/CommunityItemManagement/DeleteConfirmationPartial/' + itemId, function (data) {
+                    $('#deleteModalBody').html(data);
+                }).fail(function() {
+                    $('#deleteModalBody').html('<div class="alert alert-danger">Không thể tải thông tin xóa. Vui lòng thử lại.</div>');
+                });
+            });
+        });
+    </script>
+}

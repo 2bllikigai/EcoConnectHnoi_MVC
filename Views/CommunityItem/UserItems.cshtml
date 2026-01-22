@@ -1,0 +1,304 @@
+@using System.Security.Claims
+@model IEnumerable<EcoConnect_Hanoi.Models.CommunityItems>
+
+@{
+    ViewData["Title"] = "Sản phẩm của tôi";
+    Layout = null; // Giữ nguyên Layout = null nếu bạn muốn nó độc lập như Index.cshtml
+                   // HOẶC Layout = "_Layout"; nếu bạn muốn nó sử dụng layout 2 cột đã sửa
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - EcoConnect Hà Nội</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+    <style>
+        /* CSS chung cho bố cục và card */
+        body {
+            display: flex;
+            min-height: 100vh;
+            flex-direction: column;
+            margin: 0;
+        }
+
+        .header-top {
+            background-color: #ffffff;
+            border-bottom: 1px solid #e0e0e0;
+            padding: 10px 20px;
+        }
+
+        .main-wrapper {
+            flex: 1;
+            display: flex;
+            width: 100%;
+        }
+
+        .sidebar {
+            width: 250px;
+            background-color: #f8f9fa;
+            border-right: 1px solid #dee2e6;
+            padding: 20px 0;
+            position: sticky;
+            top: 0;
+            align-self: flex-start;
+            min-height: 100vh;
+            overflow-y: auto;
+        }
+
+        .sidebar-header {
+            padding: 0 20px 20px;
+            text-align: center;
+        }
+
+        .sidebar-menu .nav-item .nav-link {
+            display: flex;
+            align-items: center;
+            padding: 10px 20px;
+            color: #495057;
+            font-weight: 500;
+            transition: all 0.2s ease-in-out;
+        }
+
+        .sidebar-menu .nav-item .nav-link:hover,
+        .sidebar-menu .nav-item .nav-link.active {
+            background-color: #e2f0d9;
+            color: #198754;
+            border-left: 4px solid #198754;
+        }
+
+        .sidebar-menu .nav-item .nav-link i {
+            margin-right: 10px;
+            font-size: 1.2rem;
+        }
+
+        .content-area {
+            flex-grow: 1;
+            padding: 20px;
+            background-color: #fff;
+        }
+
+        .footer-bottom {
+            border-top: 1px solid #e0e0e0;
+            padding: 15px;
+            text-align: center;
+            color: #6c757d;
+            background-color: #f8f9fa;
+        }
+
+        /* Các style CSS cho card, item-image-thumbnail, btn, badge */
+        .item-image-thumbnail {
+            height: 200px;
+            object-fit: cover;
+            width: 100%;
+            border-top-left-radius: .25rem;
+            border-top-right-radius: .25rem;
+        }
+        .card a.d-block {
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+        .card {
+            border: 1px solid #a3cfbb;
+            border-radius: .25rem;
+            transition: transform .2s ease-in-out, box-shadow .2s ease-in-out;
+        }
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 4px 15px rgba(0,0,0,.1);
+        }
+        .card-title {
+            color: #198754;
+            font-weight: 600;
+        }
+        .card-text {
+            font-size: 0.9rem;
+        }
+        .card-footer {
+            background-color: #f0fff4;
+            border-top: 1px solid #a3cfbb;
+        }
+        .btn-success, .btn-outline-success {
+            color: #198754;
+            border-color: #198754;
+        }
+        .btn-success:hover, .btn-outline-success:hover {
+            background-color: #198754;
+            color: white;
+        }
+        .badge.bg-success {
+            background-color: #28a745 !important;
+        }
+
+        /* Media queries cho responsive */
+        @@media (max-width: 767.98px) {
+            .main-wrapper {
+                flex-direction: column;
+            }
+            .sidebar {
+                width: 100%;
+                position: static;
+                border-right: none;
+                border-bottom: 1px solid #dee2e6;
+                min-height: auto;
+                padding-bottom: 0;
+            }
+            .sidebar-menu .nav-item .nav-link {
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header class="header-top">
+        <nav class="navbar navbar-expand-sm navbar-light">
+            <div class="container-fluid">
+                <a class="navbar-brand d-flex align-items-center" href="/">
+                    <img src="data:image/png;base64,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" alt="Logo EcoConnect" height="30" class="me-2" />
+                    <span class="text-success fw-bold">EcoConnect Hà Nội</span>
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav"
+                        aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                    <ul class="navbar-nav">
+                    </ul>
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <span class="navbar-text me-2">Xin chào @User.Identity.Name!</span>
+                        <a class="btn btn-outline-secondary btn-sm" href="/Account/Logout">Đăng xuất</a>
+                    }
+                    else
+                    {
+                        <a class="btn btn-outline-primary btn-sm me-2" href="/Account/Register">Đăng ký</a>
+                        <a class="btn btn-primary btn-sm" href="/Account/Login">Đăng nhập</a>
+                    }
+                </div>
+            </div>
+        </nav>
+    </header>
+
+    <div class="main-wrapper">
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h5 class="text-success">Quản lý tài khoản</h5>
+            </div>
+            <nav class="sidebar-menu">
+                <ul class="nav flex-column">
+                    <li class="nav-item">
+                        <a class="nav-link" asp-area="" asp-controller="CommunityItem" asp-action="Index">
+                            <i class="bi bi-shop"></i> Chợ Đồ Cũ
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" asp-area="" asp-controller="CommunityItem" asp-action="UserItems">
+                            <i class="bi bi-box-seam"></i> Sản phẩm của tôi
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+        </aside>
+
+        <main role="main" class="content-area">
+            <h2 class="text-success mb-4"><i class="bi bi-box-seam me-2"></i>Sản phẩm của tôi</h2>
+
+            @if (TempData["SuccessMessage"] != null)
+            {
+                <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    @TempData["SuccessMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+            @if (TempData["ErrorMessage"] != null)
+            {
+                <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                    @TempData["ErrorMessage"]
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+            }
+
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <p>
+                    <a asp-action="Create" class="btn btn-outline-success">
+                        <i class="bi bi-plus-circle me-1"></i> Đăng sản phẩm mới
+                    </a>
+                </p>
+                <form asp-action="UserItems" method="get" class="d-flex"> <input type="text" name="searchString" class="form-control me-2" placeholder="Tìm kiếm sản phẩm của tôi..." />
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-search"></i> Tìm kiếm
+                    </button>
+                </form>
+            </div>
+
+            @if (!Model.Any())
+            {
+                <div class="alert alert-info text-center" role="alert">
+                    <i class="bi bi-info-circle me-2"></i> Bạn chưa đăng sản phẩm nào.
+                </div>
+            }
+            else
+            {
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    @foreach (var item in Model)
+                    {
+                        <div class="col">
+                            <div class="card h-100 shadow-sm border-success">
+                                <a asp-action="Details" asp-route-id="@item.ItemId" class="d-block">
+                                    @if (item.Images != null && item.Images.Any())
+                                    {
+                                        <img src="@item.Images.First().ImageUrl" class="card-img-top item-image-thumbnail" alt="@item.Title" onerror="this.onerror=null;this.src='/images/placeholder.png';"/>
+                                    }
+                                    else
+                                    {
+                                        <img src="/images/placeholder.png" class="card-img-top item-image-thumbnail" alt="No Image"/>
+                                    }
+                                </a>
+                                <div class="card-body d-flex flex-column">
+                                    <h5 class="card-title text-truncate text-success">@item.Title</h5>
+                                    <p class="card-text text-muted mb-1">Danh mục: @item.ItemCategory?.DisplayName</p>
+                                    <p class="card-text mb-1">Tình trạng: <span class="badge @(item.ItemCondition == EcoConnect_Hanoi.Models.CommunityItems.ItemCondittions.New ? "bg-success" : item.ItemCondition == EcoConnect_Hanoi.Models.CommunityItems.ItemCondittions.LikeNew ? "bg-info" : "bg-warning")">@item.ItemCondition.ToString()</span></p>
+                                    <p class="card-text mb-2">Loại: <span class="badge @(item.Type == EcoConnect_Hanoi.Models.CommunityItems.ItemType.Giveaway ? "bg-primary" : "bg-secondary")">@item.Type.ToString()</span></p>
+                                    <div class="mt-auto">
+                                        <a asp-action="Details" asp-route-id="@item.ItemId" class="btn btn-outline-info btn-sm">
+                                            <i class="bi bi-eye me-1"></i> Xem chi tiết
+                                        </a>
+                                        @if (User.Identity.IsAuthenticated && item.OwnerUserId.ToString() == User.FindFirstValue(ClaimTypes.NameIdentifier))
+                                        {
+                                            <a asp-action="Edit" asp-route-id="@item.ItemId" class="btn btn-outline-warning btn-sm ms-2">
+                                                <i class="bi bi-pencil me-1"></i> Sửa
+                                            </a>
+                                            <a asp-action="Delete" asp-route-id="@item.ItemId" class="btn btn-outline-danger btn-sm ms-2">
+                                                <i class="bi bi-trash me-1"></i> Xóa
+                                            </a>
+                                        }
+                                    </div>
+                                </div>
+                                <div class="card-footer bg-light border-top border-success">
+                                    <small class="text-muted">
+                                        Đăng bởi: @item.User?.FullName vào @item.CreatedAt.ToShortDateString()
+                                    </small>
+                                </div>
+                            </div>
+                        </div>
+                    }
+                </div>
+            }
+        </main>
+    </div>
+
+    <footer class="footer-bottom">
+        <div class="container">
+            &copy; @DateTime.Now.Year - EcoConnect Hà Nội - <a href="/Home/Privacy">Chính sách bảo mật</a>
+        </div>
+    </footer>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+</body>
+</html>

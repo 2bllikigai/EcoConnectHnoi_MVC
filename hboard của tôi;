@@ -1,0 +1,75 @@
+[33mcommit 6a2c9d0f46b5d12442de1dc32e2a302995feb464[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: 20h1.iso <kieuquangtruong2005tn@gmail.com>
+Date:   Mon Jul 7 08:15:56 2025 +0700
+
+    Thêm migration và cập nhật giao diện
+
+Controllers/AccountController.cs
+Controllers/CollectionScheduleController.cs
+Controllers/CommunityItemController.cs
+Controllers/CommunityItemManagementController.cs
+Controllers/GreenChallengeController.cs
+Controllers/HomeController.cs
+Controllers/RecyclingCategoriesController.cs
+Controllers/UserController.cs
+Data/EcoConnectHNContext.cs
+Folder.DotSettings.user
+Migrations/20250706154633_EmailVerificationTokenAndTokenExpiration.Designer.cs
+Migrations/20250706154633_EmailVerificationTokenAndTokenExpiration.cs
+Migrations/20250706175251_ActivityScoreAndEcoPoints.Designer.cs
+Migrations/20250706175251_ActivityScoreAndEcoPoints.cs
+Migrations/20250706215657_CollectionScheduleAndUserCollectionRequest.Designer.cs
+Migrations/20250706215657_CollectionScheduleAndUserCollectionRequest.cs
+Migrations/20250706215755_ChallengeAndUserChallenge.Designer.cs
+Migrations/20250706215755_ChallengeAndUserChallenge.cs
+Migrations/20250706215843_RecyclingCategoriesAndRecyclingCenters.Designer.cs
+Migrations/20250706215843_RecyclingCategoriesAndRecyclingCenters.cs
+Migrations/UserContextModelSnapshot.cs
+Models/Collection/CollectionSchedule.cs
+Models/Collection/UserCollectionRequest.cs
+Models/CommunityItemViewModels/CommunityItemCreateEditViewModel.cs
+Models/GreenChallenge/Challenge.cs
+Models/GreenChallenge/UserChallenge.cs
+Models/RecyclingCategories/RecyclingCategories.cs
+Models/RecyclingCategories/RecyclingCenters.cs
+Program.cs
+Service/EmailSender.cs
+Views/Account/AccessDenied.cshtml
+Views/Account/Login.cshtml
+Views/Account/Profile.cshtml
+Views/Account/Register.cshtml
+Views/CollectionSchedules/Index.cshtml
+Views/CollectionSchedules/MyRequests.cshtml.cs
+Views/CollectionSchedules/RequestPickup.cshtml
+Views/CommunityItem/Create.cshtml
+Views/CommunityItem/Delete.cshtml
+Views/CommunityItem/Details.cshtml
+Views/CommunityItem/Edit.cshtml
+Views/CommunityItem/Index.cshtml
+Views/CommunityItem/UserItems.cshtml
+Views/CommunityItemManagement/Index.cshtml
+Views/CommunityItemManagement/Review.cshtml
+Views/CommunityItemManagement/_DeleteModalPartial.cshtml
+Views/CommunityItemManagement/_DetailsModalPartial.cshtml
+Views/GreenChallenges/Details.cshtml
+Views/GreenChallenges/Index.cshtml
+Views/GreenChallenges/MyChallenges.cshtml.cs
+Views/Home/Index.cshtml
+Views/RecyclingCategories/Details.cshtml
+Views/RecyclingCategories/Index.cshtml
+Views/RecyclingCategories/RecyclingCenters.cshtml
+appsettings.json
+bin/Debug/net9.0/EcoConnect Hanoi.dll
+bin/Debug/net9.0/EcoConnect Hanoi.exe
+bin/Debug/net9.0/EcoConnect Hanoi.pdb
+bin/Debug/net9.0/appsettings.json
+obj/Debug/net9.0/EcoConnect Hanoi.AssemblyInfo.cs
+obj/Debug/net9.0/EcoConnect Hanoi.AssemblyInfoInputs.cache
+obj/Debug/net9.0/EcoConnect Hanoi.GeneratedMSBuildEditorConfig.editorconfig
+obj/Debug/net9.0/EcoConnect Hanoi.csproj.CoreCompileInputs.cache
+obj/Debug/net9.0/EcoConnect Hanoi.csproj.FileListAbsolute.txt
+obj/Debug/net9.0/EcoConnect Hanoi.dll
+obj/Debug/net9.0/EcoConnect Hanoi.pdb
+obj/Debug/net9.0/apphost.exe
+obj/Debug/net9.0/ref/EcoConnect Hanoi.dll
+obj/Debug/net9.0/refint/EcoConnect Hanoi.dll

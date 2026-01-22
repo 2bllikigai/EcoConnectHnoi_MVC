@@ -1,0 +1,71 @@
+@model IEnumerable<EcoConnect_Hanoi.Models.CollectionSchedule>
+
+@{
+    ViewData["Title"] = "Lịch Thu Gom Rác";
+    Layout = "_Layout";
+}
+
+<div class="container mt-4">
+    <h1 class="mb-4">Lịch Thu Gom Rác</h1>
+
+    <form asp-action="Index" method="get" class="mb-4">
+        <div class="input-group">
+            <input type="text" name="area" class="form-control" placeholder="Tìm kiếm theo khu vực (ví dụ: Hoàn Kiếm)" value="@ViewData["CurrentArea"]">
+            <button type="submit" class="btn btn-primary">Tìm kiếm</button>
+        </div>
+    </form>
+
+    @if (Model == null || !Model.Any())
+    {
+        <div class="alert alert-info" role="alert">
+            Không tìm thấy lịch thu gom nào cho khu vực này hoặc chưa có dữ liệu.
+        </div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-striped shadow-sm">
+                <thead class="table-success">
+                <tr>
+                    <th>Khu vực</th>
+                    <th>Ngày thu gom</th>
+                    <th>Thời gian</th>
+                    <th>Loại rác</th>
+                    <th>Ghi chú</th>
+                </tr>
+                </thead>
+                <tbody>
+                @foreach (var schedule in Model)
+                {
+                    <tr>
+                        <td>@schedule.Area</td>
+                        <td>@schedule.CollectionDay</td>
+                        <td>@schedule.CollectionTime</td>
+                        <td>@schedule.WasteType</td>
+                        <td>@schedule.Notes</td>
+                    </tr>
+                }
+                </tbody>
+            </table>
+        </div>
+    }
+
+    <div class="mt-4 text-center">
+        <p>Bạn có rác thải đặc biệt cần thu gom? Hãy gửi yêu cầu:</p>
+        <a asp-action="RequestPickup" class="btn btn-success">Gửi Yêu cầu Thu gom</a>
+        @if (User.Identity.IsAuthenticated)
+        {
+            <a asp-action="MyRequests" class="btn btn-info ms-2">Yêu cầu của tôi</a>
+        }
+    </div>
+</div>
+@section Styles
+{ <style>
+    .container {
+        display : flex;
+        flex-direction: column;
+        
+    }
+</style>
+}
+}

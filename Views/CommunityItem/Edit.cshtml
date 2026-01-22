@@ -1,0 +1,138 @@
+@using EcoConnect_Hanoi.Models
+@model EcoConnect_Hanoi.Models.CommunityItemViewModels.CommunityItemCreateEditViewModel
+
+@{
+    ViewData["Title"] = "Chỉnh Sửa Sản Phẩm";
+}
+
+<div class="container my-5">
+    <h1 class="text-center mb-4">Chỉnh Sửa Sản Phẩm</h1>
+
+    <div class="card shadow-sm p-4">
+        <form asp-action="Edit" method="post" enctype="multipart/form-data">
+            <div asp-validation-summary="All" class="text-danger mb-3"></div>
+            <input type="hidden" asp-for="ItemId" /> @* Quan trọng: Giữ lại ItemId *@
+
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Title" class="form-label">Tiêu đề</label>
+                        <input asp-for="Title" class="form-control" placeholder="Tên sản phẩm của bạn" />
+                        <span asp-validation-for="Title" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="Description" class="form-label">Mô tả</label>
+                        <textarea asp-for="Description" class="form-control" rows="4" placeholder="Mô tả chi tiết về sản phẩm"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ItemCategoryId" class="form-label">Danh mục</label>
+                        <select asp-for="ItemCategoryId" class="form-select" asp-items="ViewBag.CategoryList">
+                            <option value="">-- Chọn Danh mục --</option>
+                        </select>
+                        <span asp-validation-for="ItemCategoryId" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ItemCondition" class="form-label">Tình trạng</label>
+                        @* Sửa: Gọi trực tiếp ItemCondittions thay vì qua lớp CommunityItems *@
+                        <select asp-for="ItemCondition" class="form-select" asp-items="Html.GetEnumSelectList<ItemCondittions>()">
+                            <option value="">-- Chọn Tình trạng --</option>
+                        </select>
+                        <span asp-validation-for="ItemCondition" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label asp-for="Type" class="form-label">Loại giao dịch</label>
+                        @* Sửa: Gọi trực tiếp ItemType và thêm ID để JS dễ bắt *@
+                        <select asp-for="Type" id="TypeSelector" class="form-select" asp-items="Html.GetEnumSelectList<ItemType>()" onchange="toggleExchangeWishes()">
+                            <option value="">-- Chọn Loại giao dịch --</option>
+                        </select>
+                        <span asp-validation-for="Type" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3" id="exchangeWishesField">
+                        <label asp-for="ExchangeWishes" class="form-label">Mong muốn trao đổi</label>
+                        <input asp-for="ExchangeWishes" class="form-control" placeholder="Ví dụ: sách, đồ điện tử nhỏ..." />
+                        <span asp-validation-for="ExchangeWishes" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="PreferredLocation" class="form-label">Địa điểm ưu tiên</label>
+                        <input asp-for="PreferredLocation" class="form-control" placeholder="Ví dụ: Cầu Giấy, Ba Đình..." />
+                        <span asp-validation-for="PreferredLocation" class="text-danger"></span>
+                    </div>
+
+                    <div class="mb-3">
+                        <label class="form-label">Ảnh hiện tại:</label>
+                        @if (Model.ExistingImages != null && Model.ExistingImages.Any())
+                        {
+                            <div class="d-flex flex-wrap mb-2">
+                                @foreach (var img in Model.ExistingImages)
+                                {
+                                    <div class="position-relative me-2 mb-2 existing-image-container">
+                                        <img src="@img.ImageUrl" class="img-thumbnail" style="width: 100px; height: 100px; object-fit: cover;" alt="Existing Image" />
+                                    </div>
+                                }
+                            </div>
+                        }
+                        else
+                        {
+                            <p class="text-muted">Chưa có ảnh nào được tải lên.</p>
+                        }
+                    </div>
+
+                    <div class="mb-3">
+                        <label asp-for="ImageFiles" class="form-label">Tải lên ảnh mới:</label>
+                        <input asp-for="ImageFiles" type="file" multiple class="form-control" accept="image/*" />
+                        <span asp-validation-for="ImageFiles" class="text-danger"></span>
+                        <small class="form-text text-muted">Ảnh mới sẽ được thêm vào danh sách hiện có.</small>
+                    </div>
+                </div>
+            </div>
+
+            <div class="d-flex justify-content-between mt-4">
+                <a asp-action="Details" asp-route-id="@Model.ItemId" class="btn btn-outline-secondary">Hủy</a>
+                <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+@section Scripts {
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+    <script>
+        function toggleExchangeWishes() {
+            // Lấy ID đúng của phần tử select
+            var itemType = document.getElementById("TypeSelector").value;
+            var exchangeWishesField = document.getElementById("exchangeWishesField");
+            
+            // Sửa: So sánh trực tiếp với giá trị int của Enum Giveaway (thường là "0")
+            if (itemType === "@((int)ItemType.Giveaway)") {
+                exchangeWishesField.style.display = "none";
+                document.getElementById("ExchangeWishes").value = "";
+            } else {
+                exchangeWishesField.style.display = "block";
+            }
+        }
+
+        // Gọi hàm khi tải trang để thiết lập trạng thái ban đầu dựa trên dữ liệu cũ
+        document.addEventListener('DOMContentLoaded', toggleExchangeWishes);
+    </script>
+}
+
+<style>
+    .existing-image-container {
+        width: 100px;
+        height: 100px;
+        overflow: hidden;
+        border: 1px solid #ddd;
+        border-radius: .25rem;
+    }
+</style>

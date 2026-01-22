@@ -1,0 +1,108 @@
+@model IEnumerable<EcoConnect_Hanoi.Models.CommunityItems.CommunityItems>
+@{
+    ViewData["Title"] = "Kiểm duyệt Tin đăng";
+    Layout = "_AdminLayout";
+}
+
+<div class="container-fluid">
+    <h1 class="mb-4 text-success">Kiểm duyệt Tin đăng</h1>
+
+    <form asp-area="Admin" asp-controller="CommunityItemManagement" asp-action="Review" method="get" class="mb-3">
+        <div class="input-group">
+            <input type="text" name="searchString" class="form-control" placeholder="Tìm kiếm theo tiêu đề, mô tả..." value="@ViewData["CurrentSearch"]" />
+            <button class="btn btn-outline-success" type="submit">Tìm kiếm</button>
+        </div>
+    </form>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+            @TempData["SuccessMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @TempData["ErrorMessage"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info">Không có tin đăng nào cần kiểm duyệt.</div>
+    }
+    else
+    {
+        <div class="table-responsive">
+            <table class="table table-hover table-striped shadow-sm">
+                <thead>
+                    <tr>
+                        <th>Tiêu đề</th>
+                        <th>Người đăng</th>
+                        <th>Danh mục</th>
+                        <th>Loại</th>
+                        <th>Ngày đăng</th>
+                        <th>Hành động</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>@item.Title</td>
+                            <td>@item.User.FullName</td>
+                            <td>@item.ItemCategory.DisplayName</td>
+                            <td>@item.Type</td>
+                            <td>@item.CreatedAt.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td>
+                                <a asp-area="Admin" asp-controller="CommunityItemManagement" asp-action="Details" asp-route-id="@item.ItemId" class="btn btn-sm btn-secondary me-1" title="Xem chi tiết"><i class="bi bi-eye"></i></a>
+                                <form asp-area="Admin" asp-controller="CommunityItemManagement" asp-action="ApproveItem" asp-route-id="@item.ItemId" method="post" class="d-inline">
+                                    <button type="submit" class="btn btn-sm btn-success me-1" title="Duyệt"><i class="bi bi-check-lg"></i> Duyệt</button>
+                                </form>
+                                <button type="button" class="btn btn-sm btn-danger" data-bs-toggle="modal" data-bs-target="#rejectModal" data-item-id="@item.ItemId" title="Từ chối"><i class="bi bi-x-lg"></i> Từ chối</button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+</div>
+
+<div class="modal fade" id="rejectModal" tabindex="-1" aria-labelledby="rejectModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="rejectModalLabel">Từ chối tin đăng</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form asp-area="Admin" asp-controller="CommunityItemManagement" asp-action="RejectItem" method="post">
+                <div class="modal-body">
+                    <input type="hidden" name="id" id="rejectItemId" />
+                    <div class="mb-3">
+                        <label for="reason" class="form-label">Lý do từ chối:</label>
+                        <textarea class="form-control" id="reason" name="reason" rows="3" required></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Hủy</button>
+                    <button type="submit" class="btn btn-danger">Từ chối</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        var rejectModal = document.getElementById('rejectModal');
+        rejectModal.addEventListener('show.bs.modal', function (event) {
+            var button = event.relatedTarget;
+            var itemId = button.getAttribute('data-item-id');
+            var modalItemIdInput = rejectModal.querySelector('#rejectItemId');
+            modalItemIdInput.value = itemId;
+        });
+    </script>
+}

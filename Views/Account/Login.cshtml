@@ -1,0 +1,102 @@
+@model EcoConnect_Hanoi.Models.LoginViewModel
+@{
+    ViewData["Title"] = "Đăng nhập";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<div class="container">
+    <div class="left">
+        <h1>♻️ EcoConnect</h1>
+        <h2>🤝 Chung tay vì Hà Nội xanh</h2>
+        <p>Kết nối cộng đồng, bảo vệ môi trường và xây dựng lối sống bền vững.</p>
+        <div class="feature">
+            <div class="feature-box">
+                <h4>♻️ Tái chế thông minh</h4>
+                <p>Hướng dẫn phân loại và tái chế rác thải hiệu quả</p>
+            </div>
+            <div class="feature-box">
+                <h4>🤝 Kết nối cộng đồng</h4>
+                <p>Chia sẻ và trao đổi đồ dùng không cần thiết</p>
+            </div>
+            <div class="feature-box">
+                <h4>🏆 Thử thách xanh</h4>
+                <p>Tham gia các hoạt động bảo vệ môi trường</p>
+            </div>
+        </div>
+    </div>
+    <div class="right">
+        <div class="tabs">
+            <a href="#" class="active">Đăng nhập</a>
+            <a href="/Account/Register">Đăng ký</a>
+        </div>
+        <div class="login-title">Chào mừng trở lại!</div>
+        <div class="title">Đăng nhập với email</div>
+        @if (ViewBag.SuccessMessage != null)
+        {
+            <div class="alert success-message" role="alert">
+                @ViewBag.SuccessMessage
+            </div>
+        }
+
+        @if (ViewBag.ErrorMessage != null)
+        {
+            <div class="alert error-message" role="alert">
+                @ViewBag.ErrorMessage
+            </div>
+        }
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+
+        <form asp-action="Login" asp-controller="Account" method="post">
+            <div class="form-group">
+                <input asp-for="Email" class="form-control" placeholder="Nhập địa chỉ email của bạn" />
+                <span asp-validation-for="Email" class="text-danger"></span>
+            </div>
+            <div class="form-group">
+                <input asp-for="Password" class="form-control" placeholder="Nhập mật khẩu của bạn" />
+                <span asp-validation-for="Password" class="text-danger"></span>
+            </div>
+            <div class="form-options">
+                <label><input type="checkbox" asp-for="RememberMe" /> Ghi nhớ đăng nhập</label>
+                <a href="/Account/ForgotPassword">Quên mật khẩu?</a>
+            </div>
+            <button type="submit" class="login-btn">Đăng nhập</button>
+        </form>
+
+        <div class="register-link">
+            Chưa có tài khoản?
+            <a href="/Account/Register">Đăng ký ngay</a>
+        </div>
+    </div>
+</div>
+
+@section Styles {
+    <link href="@Url.Content("~/css/login.css")" rel="stylesheet" />
+    <style>
+        /* CSS để hiển thị thông báo. Bạn có thể đặt nó vào login.css hoặc một file CSS chung */
+        .alert {
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .alert.success-message {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .alert.error-message {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        /* CSS cho các trường input nếu có lỗi validation */
+        .input-validation-error {
+            border: 1px solid #dc3545 !important;
+        }
+    </style>
+}
+@section Scripts {
+    @{await Html.RenderPartialAsync("_ValidationScriptsPartial");}
+}

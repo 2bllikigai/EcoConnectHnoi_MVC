@@ -1,0 +1,57 @@
+@model EcoConnect_Hanoi.Models.CommunityItems
+
+@* Đây là nội dung hiển thị bên trong modal chi tiết *@
+<div>
+    <dl class="row">
+        <dt class="col-sm-4">Tiêu đề:</dt>
+        <dd class="col-sm-8">@Model.Title</dd>
+
+        <dt class="col-sm-4">Mô tả:</dt>
+        <dd class="col-sm-8">@Model.Description</dd>
+
+        <dt class="col-sm-4">Người đăng:</dt>
+        <dd class="col-sm-8">@Model.User.FullName</dd>
+
+        <dt class="col-sm-4">Danh mục:</dt>
+        <dd class="col-sm-8">@Model.ItemCategory.DisplayName</dd>
+
+        <dt class="col-sm-4">Loại:</dt>
+        <dd class="col-sm-8">@Model.Type</dd>
+
+        <dt class="col-sm-4">Tình trạng:</dt>
+        <dd class="col-sm-8">@Model.ItemCondition</dd>
+
+        <dt class="col-sm-4">Địa điểm:</dt>
+        <dd class="col-sm-8">@Model.PreferredLocation</dd>
+
+        <dt class="col-sm-4">Ngày đăng:</dt>
+        <dd class="col-sm-8">@Model.CreatedAt.ToString("dd/MM/yyyy HH:mm")</dd>
+        
+        <dt class="col-sm-4">Trạng thái:</dt>
+        <dd class="col-sm-8">
+            <span class="badge @(Model.Status == EcoConnect_Hanoi.Models.CommunityItems.ItemStatus.Completed ? "bg-success" : Model.Status == EcoConnect_Hanoi.Models.CommunityItems.ItemStatus.Reserved ? "bg-warning text-dark" : Model.Status == EcoConnect_Hanoi.Models.CommunityItems.ItemStatus.Available ? "bg-danger" : "bg-secondary")">@Model.Status</span>
+        </dd>
+
+        <dt class="col-sm-4">Hình ảnh:</dt>
+        <dd class="col-sm-8">
+            @if (Model.Images != null && Model.Images.Any())
+            {
+                <div class="row">
+                    @foreach (var image in Model.Images)
+                    {
+                        <div class="col-md-3 mb-2">
+                            <img src="@image.ImageUrl" class="img-fluid rounded" alt="Hình ảnh sản phẩm" />
+                        </div>
+                    }
+                </div>
+            }
+            else
+            {
+                <span>Không có hình ảnh</span>
+            }
+        </dd>
+    </dl>
+</div>
+<div class="modal-footer">
+    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+</div>
